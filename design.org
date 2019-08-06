@@ -1,0 +1,21 @@
+* Concepts
+** Resource
+*** Properties
+**** Requirement
+*** Types
+**** Basic Resource
+     produced by system or user click
+**** Advanced Resource
+     produced by Transform Node with Basic Resource or Advanced Resource
+** Node
+*** Properties
+**** In Port
+**** Out Port
+**** Storage(restricted)
+*** Types
+**** Transform Node
+     receive one or more types of Resources and produce others
+**** Link Node
+     take/receive x unit(s) Resource from one Node or Link give to another
+**** Storage Node
+     receive any Resource
