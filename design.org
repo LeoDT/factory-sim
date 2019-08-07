@@ -15,7 +15,9 @@
 *** Types
 **** Transform Node
      receive one or more types of Resources and produce others
-**** Link Node
-     take/receive x unit(s) Resource from one Node or Link give to another
 **** Storage Node
      receive any Resource
+** Link
+*** Types
+**** Normal
+     take x unit(s) Resource from one Node or Link give to another
