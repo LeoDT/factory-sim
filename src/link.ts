@@ -22,7 +22,7 @@ export function makeLink(from: Slot, to: Slot): Link {
   };
 }
 
-export function runLink(link: Link) {
+export function runLink(link: Link): void {
   if (link.holding.resource) {
     const { resource } = link.holding;
 

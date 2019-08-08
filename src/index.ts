@@ -1,7 +1,7 @@
 import { loadResourceTypes, getRequiredResourcesForResources } from './resource';
 import { loadNodeTypes, getNodeTypeById } from './node';
 
-function init() {
+function init(): void {
   loadResourceTypes();
   loadNodeTypes();
 

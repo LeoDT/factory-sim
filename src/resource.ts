@@ -3,7 +3,7 @@ import { resourceData, ResourceTypeJSON } from './data/resourceType';
 export interface ResourceType {
   id: number;
   name: string;
-  requirements: Array<Resource>;
+  requirements: Resource[];
 }
 
 export interface Resource {
@@ -13,7 +13,7 @@ export interface Resource {
 
 const resourceTypes = new Map<number, ResourceType>();
 
-export function loadResourceTypes() {
+export function loadResourceTypes(): void {
   const json: ResourceTypeJSON = JSON.parse(resourceData);
 
   const pendingRequirements: Array<
@@ -39,7 +39,7 @@ export function loadResourceTypes() {
   console.debug('loaded resource types', resourceTypes);
 }
 
-export function getResourceTypeById(id: number) {
+export function getResourceTypeById(id: number): ResourceType | undefined {
   return resourceTypes.get(id);
 }
 
@@ -50,11 +50,11 @@ export function makeResource(resourceType: ResourceType, amount: number): Resour
   };
 }
 
-export function cloneResource(resource: Resource) {
+export function cloneResource(resource: Resource): Resource {
   return makeResource(resource.resourceType, resource.amount);
 }
 
-export function makeResourceWithTypeId(resourceTypeId: number, amount: number) {
+export function makeResourceWithTypeId(resourceTypeId: number, amount: number): Resource {
   const resourceType = getResourceTypeById(resourceTypeId);
 
   if (resourceType) {
@@ -66,8 +66,8 @@ export function makeResourceWithTypeId(resourceTypeId: number, amount: number) {
 
 export function isResourceRequirementsFullfilled(
   resourceType: ResourceType,
-  resources: Array<Resource>
-) {
+  resources: Resource[]
+): boolean {
   const { requirements } = resourceType;
 
   if (requirements) {
@@ -83,8 +83,8 @@ export function isResourceRequirementsFullfilled(
   return true;
 }
 
-export function mergeResources(resources: Array<Resource>) {
-  return resources.reduce<Array<Resource>>((acc, resource) => {
+export function mergeResources(resources: Resource[]): Resource[] {
+  return resources.reduce<Resource[]>((acc, resource) => {
     const hit = acc.find(r => r.resourceType === resource.resourceType);
 
     if (hit) {
@@ -97,10 +97,10 @@ export function mergeResources(resources: Array<Resource>) {
   }, []);
 }
 
-export function getRequiredResourcesForResources(resources: Array<Resource>) {
-  const requirements: Array<Resource> = resources
+export function getRequiredResourcesForResources(resources: Resource[]): Resource[] {
+  const requirements: Resource[] = resources
     .map(({ resourceType }) => resourceType.requirements || [])
-    .reduce<Array<Resource>>((acc, v) => acc.concat(v), []);
+    .reduce<Resource[]>((acc, v) => acc.concat(v), []);
 
   return mergeResources(requirements);
 }

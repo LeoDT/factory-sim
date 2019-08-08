@@ -19,22 +19,24 @@ const NODE_STORAGE_MULTIPLIER = 5;
 export interface NodeType {
   id: number;
   name: string;
-  resourceRequirements: Array<Resource>;
-  output: Array<Resource>;
+  resourceRequirements: Resource[];
+  output: Resource[];
 }
 
 export interface Node {
   nodeType: NodeType;
 
-  outSlots: Array<Slot>; // n slots, n = output length
-  storage: Array<Slot>; // n slots, n = all output's unique requirements length,
+  // n slots, n = output length
+  outSlots: Slot[];
+  // n slots, n = all output's unique requirements length,
+  storage: Slot[];
 
   producing: boolean;
 }
 
 const nodeTypes = new Map<number, NodeType>();
 
-export function loadNodeTypes() {
+export function loadNodeTypes(): void {
   const json: NodeTypeJSON = JSON.parse(nodeData);
 
   json.forEach(({ resourceRequirements, output, ...more }) => {
@@ -54,7 +56,7 @@ export function loadNodeTypes() {
   console.debug('loaded node types', nodeTypes);
 }
 
-export function getNodeTypeById(nodeTypeId: number) {
+export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
   return nodeTypes.get(nodeTypeId);
 }
 
@@ -75,11 +77,11 @@ export function makeNode(nodeType: NodeType): Node {
   return node;
 }
 
-export function findStorageSlotForResource(node: Node, resource: Resource) {
+export function findStorageSlotForResource(node: Node, resource: Resource): Slot | undefined {
   return node.storage.find(s => slotCanAcceptResource(s, resource));
 }
 
-export function runNode(node: Node) {
+export function runNode(node: Node): void {
   // product
   const requiredResources = getRequiredResourcesForResources(node.nodeType.output);
   const enoughResources = requiredResources.every(r =>
