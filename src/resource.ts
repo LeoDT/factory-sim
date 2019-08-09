@@ -1,4 +1,4 @@
-import { resourceData, ResourceTypeJSON } from './data/resourceType';
+import { resourceData, ResourceTypeJSON } from '~/data/resourceType';
 
 export interface ResourceType {
   id: number;

@@ -1,4 +1,4 @@
-import { nodeData, NodeTypeJSON } from './data/nodeType';
+import { nodeData, NodeTypeJSON } from '~/data/nodeType';
 
 import { globalClock } from './observables';
 

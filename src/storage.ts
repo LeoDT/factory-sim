@@ -1,5 +1,5 @@
-import { storageData, StorageTypeJSON } from './data/storageType';
-import { range } from './utils/range';
+import { storageData, StorageTypeJSON } from '~/data/storageType';
+import { range } from '~/utils/range';
 
 import { Slot, makeSlot, slotCanAcceptResource } from './slot';
 import { Resource } from './resource';
