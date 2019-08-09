@@ -3,19 +3,21 @@
   "version": "1.0.0",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html -d ./ --no-source-maps --public-url ./"
+    "build": "parcel build src/index.html"
   },
   "main": "index.js",
   "author": "liucheng <liucheng@suqarevalleytech.com>",
   "license": "MIT",
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^1.13.0",
+    "@typescript-eslint/parser": "^1.13.0",
+    "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.0.0",
     "parcel-bundler": "1.12.3",
     "react-hot-loader": "4.12.10",
-    "typescript": "3.5.3",
-    "@typescript-eslint/eslint-plugin": "^1.13.0",
-    "@typescript-eslint/parser": "^1.13.0",
-    "eslint": "^6.1.0"
+    "typescript": "3.5.3"
   },
-  "dependencies": {}
+  "dependencies": {
+    "rxjs": "^6.5.2"
+  }
 }

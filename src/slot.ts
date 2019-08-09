@@ -1,4 +1,4 @@
-import { ResourceType, Resource } from './resource';
+import { ResourceType, Resource, makeResource } from './resource';
 
 export interface Slot {
   // empty means any type
@@ -18,7 +18,7 @@ export function makeSlot(resourceTypes: ResourceType[] = [], capacity: number = 
 export function putResourceInSlot(slot: Slot, resource: Resource): boolean {
   if (slotCanAcceptResource(slot, resource)) {
     if (slot.resource) {
-      slot.resource.amount += resource.amount;
+      slot.resource = makeResource(resource.resourceType, slot.resource.amount + resource.amount);
     } else {
       slot.resource = resource;
     }
@@ -34,7 +34,7 @@ export function takeResourceOutSlot(slot: Slot, resource: Resource): boolean {
     if (slot.resource.amount === resource.amount) {
       slot.resource = undefined;
     } else {
-      slot.resource.amount -= resource.amount;
+      slot.resource = makeResource(resource.resourceType, slot.resource.amount - resource.amount);
     }
 
     return true;

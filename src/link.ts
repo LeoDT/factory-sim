@@ -1,3 +1,5 @@
+import { globalClock } from './observables';
+
 import {
   Slot,
   makeSlot,
@@ -38,4 +40,14 @@ export function runLink(link: Link): void {
       putResourceInSlot(link.holding, resource);
     }
   }
+}
+
+export function makeAndStartLink(from: Slot, to: Slot): Link {
+  const link = makeLink(from, to);
+
+  globalClock.subscribe(() => {
+    runLink(link);
+  });
+
+  return link;
 }
