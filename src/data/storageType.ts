@@ -2,7 +2,7 @@ const data = JSON.stringify([
   {
     id: 1,
     name: 'basic storage',
-    slots: 10,
+    slots: 5,
     slotCapacity: 10
   }
 ]);

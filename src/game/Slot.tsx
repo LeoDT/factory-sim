@@ -19,12 +19,22 @@ export default function Slot({ slot }: Props) {
   });
 
   return (
-    <div className="p-1 m-1 border border-gray-300" ref={ref}>
+    <div
+      className="m-1 border border-gray-300 relative h-10 w-10 text-center bg-gray-100"
+      ref={ref}
+    >
       <Observer>
         {() => (
-          <div className="h-6">
-            {slot.resource ? `${slot.resource.resourceType.name} - ${slot.resource.amount}` : null}
-          </div>
+          <>
+            {slot.resource ? (
+              <>
+                <div className="text-2xl">{slot.resource.resourceType.icon}</div>
+                <div className="absolute text-xs bottom-0 right-0 font-mono">
+                  {slot.resource.amount}
+                </div>
+              </>
+            ) : null}
+          </>
         )}
       </Observer>
     </div>

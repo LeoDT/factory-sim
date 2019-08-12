@@ -11,7 +11,7 @@ const data = JSON.stringify([
     name: 'advanced A producer',
     resourceRequirements: [{ resourceTypeId: 1, amount: 10 }],
     output: [{ resourceTypeId: 2 }],
-    cycle: 4
+    cycle: 10
   },
   {
     id: 3,

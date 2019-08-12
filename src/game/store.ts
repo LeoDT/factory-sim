@@ -61,14 +61,20 @@ window.store = store;
 export function mock(): void {
   const nodeType1 = getNodeTypeById(1);
   const nodeType2 = getNodeTypeById(2);
+  const nodeType3 = getNodeTypeById(3);
   const storageType = getStorageTypeById(1);
 
-  if (nodeType1 && nodeType2 && storageType) {
+  if (nodeType1 && nodeType2 && nodeType3 && storageType) {
     const node1 = store.addNode(nodeType1);
     const node2 = store.addNode(nodeType2);
     store.addLink(node1.outSlots[0], node2.storage[0]);
     const storage = store.addStorage(storageType);
     store.addLink(node2.outSlots[0], storage.slots[0]);
+
+    const node3 = store.addNode(nodeType3);
+    store.addLink(node1.outSlots[0], node3.storage[0]);
+    store.addLink(storage.slots[0], node3.storage[1]);
+    store.addLink(node3.outSlots[0], storage.slots[1]);
   }
 }
 

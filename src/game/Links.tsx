@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { autorun } from 'mobx';
 
-import { globalClock } from '~observables';
+import { drawClock } from '~observables';
 import { getTopCenterXY } from '~utils/draw';
 import { useStore } from './store';
 
@@ -13,10 +12,10 @@ export default function Links() {
     if (canvas.current) {
       const ctx = canvas.current.getContext('2d') as CanvasRenderingContext2D;
 
-      const subs = globalClock.subscribe(() => {
+      const subs = drawClock.subscribe(() => {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-        store.links.forEach(({ from, to }) => {
+        store.links.forEach(({ from, to, holding }) => {
           const fromEl = store.slotUIElements.get(from);
           const toEl = store.slotUIElements.get(to);
 
@@ -24,12 +23,11 @@ export default function Links() {
             const fromPos = getTopCenterXY(fromEl);
             const toPos = getTopCenterXY(toEl);
 
+            ctx.strokeStyle = holding.resource ? 'red' : 'black';
             ctx.beginPath();
-            ctx.lineWidth = 1;
-            ctx.moveTo(...fromPos);
-            ctx.lineTo(...toPos);
+            ctx.moveTo(fromPos[0], fromPos[1]);
+            ctx.lineTo(toPos[0], toPos[1]);
             ctx.stroke();
-            ctx.closePath();
           }
         });
       });
@@ -42,7 +40,7 @@ export default function Links() {
 
   return (
     <canvas
-      className="fixed top-0 left-0"
+      className="absolute top-0 left-0 pointer-events-none z-50"
       ref={canvas}
       height={window.innerHeight}
       width={window.innerWidth}

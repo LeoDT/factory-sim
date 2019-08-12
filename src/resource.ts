@@ -5,6 +5,7 @@ import { resourceData, ResourceTypeJSON } from '~/data/resourceType';
 export interface ResourceType {
   id: number;
   name: string;
+  icon: string;
   requirements: Resource[];
 }
 
