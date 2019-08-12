@@ -1,8 +1,11 @@
+import { observable, IObservableObject } from 'mobx';
+
 import { storageData, StorageTypeJSON } from '~/data/storageType';
 import { range } from '~/utils/range';
 
 import { Slot, makeSlot, slotCanAcceptResource } from './slot';
 import { Resource } from './resource';
+import { generateShortId } from '~utils/shortid';
 
 export interface StorageType {
   id: number;
@@ -11,7 +14,8 @@ export interface StorageType {
   slotCapacity: number;
 }
 
-export interface Storage {
+export interface Storage extends IObservableObject {
+  id: string;
   storageType: StorageType;
   slots: Slot[];
 }
@@ -36,11 +40,18 @@ export function getStorageTypeById(storageTypeId: number): StorageType | undefin
   return storageTypes.get(storageTypeId);
 }
 
-export function makeStorage(storageType: StorageType): Storage {
-  return {
-    storageType,
-    slots: range(storageType.slots).map(() => makeSlot([], storageType.slotCapacity))
-  };
+export function makeStorage(storageType: StorageType, id: string = generateShortId()): Storage {
+  return observable.object(
+    {
+      id,
+      storageType,
+      slots: range(storageType.slots).map(() => makeSlot([], storageType.slotCapacity))
+    },
+    {},
+    {
+      deep: false
+    }
+  );
 }
 
 export function storageFindAvailableSlotForResource(

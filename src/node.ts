@@ -1,3 +1,4 @@
+import { observable, IObservableObject } from 'mobx';
 import { nodeData, NodeTypeJSON } from '~/data/nodeType';
 
 import { globalClock } from './observables';
@@ -16,6 +17,7 @@ import {
   putResourceInSlot,
   slotCanAffordResource
 } from './slot';
+import { generateShortId } from '~utils/shortid';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -28,8 +30,9 @@ export interface NodeType {
   cycle: number;
 }
 
-export interface Node {
+export interface Node extends IObservableObject {
   nodeType: NodeType;
+  id: string;
 
   // n slots, n = output length
   outSlots: Slot[];
@@ -65,19 +68,24 @@ export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
   return nodeTypes.get(nodeTypeId);
 }
 
-export function makeNode(nodeType: NodeType): Node {
+export function makeNode(nodeType: NodeType, id: string = generateShortId()): Node {
   const resourcesForProduce = getRequiredResourcesForResources(nodeType.output);
 
-  const node = {
-    nodeType,
+  const node = observable.object(
+    {
+      nodeType,
+      id,
 
-    outSlots: nodeType.output.map(r => makeSlot([r.resourceType], r.amount)),
-    storage: resourcesForProduce.map(r =>
-      makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
-    ),
+      outSlots: nodeType.output.map(r => makeSlot([r.resourceType], r.amount)),
+      storage: resourcesForProduce.map(r =>
+        makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
+      ),
 
-    currentCycle: 0
-  };
+      currentCycle: 0
+    },
+    {},
+    { deep: false }
+  );
 
   return node;
 }

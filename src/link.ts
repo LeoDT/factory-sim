@@ -1,3 +1,5 @@
+import { observable, IObservableObject } from 'mobx';
+
 import { globalClock } from './observables';
 
 import {
@@ -9,19 +11,26 @@ import {
   slotCanAcceptResource
 } from './slot';
 import { makeResource } from './resource';
+import { generateShortId } from '~utils/shortid';
 
-export interface Link {
+export interface Link extends IObservableObject {
+  id: string;
   from: Slot;
   to: Slot;
   holding: Slot;
 }
 
-export function makeLink(from: Slot, to: Slot): Link {
-  return {
-    from,
-    to,
-    holding: makeSlot([], 1)
-  };
+export function makeLink(from: Slot, to: Slot, id: string = generateShortId()): Link {
+  return observable.object(
+    {
+      id,
+      from,
+      to,
+      holding: makeSlot([], 1)
+    },
+    {},
+    { deep: false }
+  );
 }
 
 export function runLink(link: Link): void {

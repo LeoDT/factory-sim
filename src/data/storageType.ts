@@ -3,7 +3,7 @@ const data = JSON.stringify([
     id: 1,
     name: 'basic storage',
     slots: 10,
-    slotCapacity: 50
+    slotCapacity: 10
   }
 ]);
 

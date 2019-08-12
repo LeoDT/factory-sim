@@ -1,3 +1,5 @@
+import { observable, IObservableObject } from 'mobx';
+
 import { resourceData, ResourceTypeJSON } from '~/data/resourceType';
 
 export interface ResourceType {
@@ -6,7 +8,7 @@ export interface ResourceType {
   requirements: Resource[];
 }
 
-export interface Resource {
+export interface Resource extends IObservableObject {
   resourceType: ResourceType;
   amount: number;
 }
@@ -44,10 +46,14 @@ export function getResourceTypeById(id: number): ResourceType | undefined {
 }
 
 export function makeResource(resourceType: ResourceType, amount: number): Resource {
-  return {
-    resourceType,
-    amount
-  };
+  return observable.object(
+    {
+      resourceType,
+      amount
+    },
+    {},
+    { deep: false }
+  );
 }
 
 export function cloneResource(resource: Resource): Resource {

@@ -1,6 +1,8 @@
+import { observable, IObservableObject } from 'mobx';
+
 import { ResourceType, Resource, makeResource } from './resource';
 
-export interface Slot {
+export interface Slot extends IObservableObject {
   // empty means any type
   resourceTypes: ResourceType[];
   capacity: number;
@@ -9,10 +11,15 @@ export interface Slot {
 }
 
 export function makeSlot(resourceTypes: ResourceType[] = [], capacity: number = 1): Slot {
-  return {
-    resourceTypes,
-    capacity
-  };
+  return observable.object(
+    {
+      resourceTypes,
+      capacity
+    },
+    {
+      resourceTypes: observable.ref
+    }
+  );
 }
 
 export function putResourceInSlot(slot: Slot, resource: Resource): boolean {

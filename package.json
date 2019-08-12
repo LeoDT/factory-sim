@@ -3,21 +3,32 @@
   "version": "1.0.0",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html"
+    "build": "parcel build src/index.html",
+    "css": "tailwind src/styles/styles.css -o src/styles/out.css"
   },
   "main": "index.js",
-  "author": "liucheng <liucheng@suqarevalleytech.com>",
+  "author": "LeoDT <leojoy710@gmail.com>",
   "license": "MIT",
   "devDependencies": {
+    "@types/node": "^12.7.1",
+    "@types/react": "^16.9.0",
+    "@types/react-dom": "^16.8.5",
+    "@types/shortid": "^0.0.29",
     "@typescript-eslint/eslint-plugin": "^1.13.0",
     "@typescript-eslint/parser": "^1.13.0",
     "eslint": "^6.1.0",
     "eslint-config-prettier": "^6.0.0",
     "parcel-bundler": "1.12.3",
-    "react-hot-loader": "4.12.10",
+    "react-hot-loader": "^4.12.10",
     "typescript": "3.5.3"
   },
   "dependencies": {
-    "rxjs": "^6.5.2"
+    "mobx": "^5.13.0",
+    "mobx-react-lite": "^1.4.1",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "rxjs": "^6.5.2",
+    "shortid": "^2.2.14",
+    "tailwindcss": "^1.1.0"
   }
 }
