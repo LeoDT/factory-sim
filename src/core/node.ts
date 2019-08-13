@@ -1,5 +1,7 @@
 import { observable, IObservableObject } from 'mobx';
+
 import { nodeData, NodeTypeJSON } from '~/data/nodeType';
+import { generateShortId } from '~utils/shortid';
 
 import { globalClock } from './observables';
 
@@ -17,7 +19,7 @@ import {
   putResourceInSlot,
   slotCanAffordResource
 } from './slot';
-import { generateShortId } from '~utils/shortid';
+import { makePort, Port } from './port';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -34,10 +36,12 @@ export interface Node extends IObservableObject {
   nodeType: NodeType;
   id: string;
 
+  inPort: Port;
+  outPort: Port;
   // n slots, n = output length
   outSlots: Slot[];
   // n slots, n = all output's unique requirements length,
-  storage: Slot[];
+  storageSlots: Slot[];
 
   currentCycle: number;
 }
@@ -70,16 +74,21 @@ export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
 
 export function makeNode(nodeType: NodeType, id: string = generateShortId()): Node {
   const resourcesForProduce = getRequiredResourcesForResources(nodeType.output);
+  const outSlots = nodeType.output.map(r => makeSlot([r.resourceType], r.amount));
+  const storageSlots = resourcesForProduce.map(r =>
+    makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
+  );
 
   const node = observable.object(
     {
       nodeType,
       id,
 
-      outSlots: nodeType.output.map(r => makeSlot([r.resourceType], r.amount)),
-      storage: resourcesForProduce.map(r =>
-        makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
-      ),
+      inPort: makePort(storageSlots),
+      outPort: makePort(outSlots),
+
+      outSlots,
+      storageSlots,
 
       currentCycle: 0
     },
@@ -91,7 +100,7 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
 }
 
 export function findStorageSlotForResource(node: Node, resource: Resource): Slot | undefined {
-  return node.storage.find(s => s.resourceTypes.indexOf(resource.resourceType) !== -1);
+  return node.storageSlots.find(s => s.resourceTypes.indexOf(resource.resourceType) !== -1);
 }
 
 export function runNode(node: Node): void {

@@ -11,14 +11,14 @@ const data = JSON.stringify([
     name: 'advanced A producer',
     resourceRequirements: [{ resourceTypeId: 1, amount: 10 }],
     output: [{ resourceTypeId: 2 }],
-    cycle: 10
+    cycle: 4
   },
   {
     id: 3,
     name: 'advanced B producer',
     resourceRequirements: [{ resourceTypeId: 2, amount: 2 }],
     output: [{ resourceTypeId: 3 }],
-    cycle: 5
+    cycle: 7
   }
 ]);
 

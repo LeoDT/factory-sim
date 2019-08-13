@@ -1,23 +1,37 @@
+#+SEQ_TODO: TODO(t) | DONE(d!)  CANCELED(c@)
+
 * Concepts
 ** Resource
 *** Properties
-**** Requirement
+- Requirement :: [[Resource][Resources]] needed to produce
 *** Types
 **** Basic Resource
      produced by system or user click
 **** Advanced Resource
-     produced by Transform Node with Basic Resource or Advanced Resource
+     produced by [[Transform Node]] with [[Basic Resource]] or [[Advanced Resource]]
+** Slot
+*** Types
+**** Normal
+     hold an amount of resource, resource can be trasnported by [[Link]]
+** Port
+*** Types
+**** Normal
+     find specified [[Resource]] from connected [[Slot][Slots]] and act like a [[Slot]](link can connect it)
 ** Node
 *** Properties
-**** In Port
-**** Out Port
-**** Storage(restricted)
+- In Port :: link with others to receive [[Resource]]
+- Out Port :: hold produced [[Resource]]
+- Storage(restricted) :: store received [[Resource]]
 *** Types
 **** Transform Node
-     receive one or more types of Resources and produce others
+     receive one or more types of [[Resource][Resources]] and produce others
 **** Storage Node
-     receive any Resource
+     receive any [[Resource]]
 ** Link
 *** Types
 **** Normal
-     take x unit(s) Resource from one Node or Link give to another
+     take x unit(s) [[Resource]] from one [[Node]] or [[Link]] give to another
+* Todos
+** TODO port
+** TODO pause
+** TODO cycler

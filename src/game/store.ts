@@ -1,10 +1,10 @@
 import { createContext, useContext } from 'react';
 import { observable } from 'mobx';
 
-import { NodeType, Node, makeAndStartNode, getNodeTypeById } from '~node';
-import { Link, makeAndStartLink } from '~link';
-import { Storage, makeStorage, StorageType, getStorageTypeById } from '~storage';
-import { Slot } from '~slot';
+import { NodeType, Node, makeAndStartNode, getNodeTypeById } from '~core/node';
+import { Link, makeAndStartLink } from '~core/link';
+import { Storage, makeStorage, StorageType, getStorageTypeById } from '~core/storage';
+import { Port } from '~core/port';
 
 class Store {
   public nodes = observable.array<Node>([], { deep: false });
@@ -19,7 +19,7 @@ class Store {
     return node;
   }
 
-  public addLink(from: Slot, to: Slot): Link {
+  public addLink(from: Port, to: Port): Link {
     const link = makeAndStartLink(from, to);
 
     this.links.push(link);
@@ -35,12 +35,12 @@ class Store {
     return storage;
   }
 
-  public slotUIElements = observable.map<Slot, HTMLElement>(new Map<Slot, HTMLElement>(), {
+  public portUIElements = observable.map<Port, HTMLElement>(new Map<Port, HTMLElement>(), {
     deep: false
   });
 
-  public updateSlotUIElement(slot: Slot, e: HTMLElement): void {
-    this.slotUIElements.set(slot, e);
+  public updatePortUIElement(port: Port, e: HTMLElement): void {
+    this.portUIElements.set(port, e);
   }
 }
 
@@ -67,14 +67,14 @@ export function mock(): void {
   if (nodeType1 && nodeType2 && nodeType3 && storageType) {
     const node1 = store.addNode(nodeType1);
     const node2 = store.addNode(nodeType2);
-    store.addLink(node1.outSlots[0], node2.storage[0]);
     const storage = store.addStorage(storageType);
-    store.addLink(node2.outSlots[0], storage.slots[0]);
+    store.addLink(node1.outPort, storage.port);
+    store.addLink(node2.outPort, storage.port);
+    store.addLink(storage.port, node2.inPort);
 
     const node3 = store.addNode(nodeType3);
-    store.addLink(node1.outSlots[0], node3.storage[0]);
-    store.addLink(storage.slots[0], node3.storage[1]);
-    store.addLink(node3.outSlots[0], storage.slots[1]);
+    store.addLink(storage.port, node3.inPort);
+    store.addLink(node3.outPort, storage.port);
   }
 }
 

@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { render } from 'react-dom';
 
-import { loadResourceTypes } from './resource';
-import { loadNodeTypes } from './node';
-import { loadStorageTypes } from './storage';
-import { mock } from './game/store';
+import { loadResourceTypes } from './core/resource';
+import { loadNodeTypes } from './core/node';
+import { loadStorageTypes } from './core/storage';
 
+import { mock } from './game/store';
 import Game from './game/Game';
 
 loadResourceTypes();

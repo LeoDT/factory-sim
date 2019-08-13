@@ -1,7 +1,7 @@
 import * as React from 'react';
 
-import { drawClock } from '~observables';
-import { getTopCenterXY } from '~utils/draw';
+import { drawClock } from '~core/observables';
+import { getCenterCenterXY } from '~utils/draw';
 import { useStore } from './store';
 
 export default function Links() {
@@ -15,15 +15,28 @@ export default function Links() {
       const subs = drawClock.subscribe(() => {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-        store.links.forEach(({ from, to, holding }) => {
-          const fromEl = store.slotUIElements.get(from);
-          const toEl = store.slotUIElements.get(to);
+        store.links.forEach(({ from, to, holding, cycler }) => {
+          const fromEl = store.portUIElements.get(from);
+          const toEl = store.portUIElements.get(to);
 
           if (fromEl && toEl) {
-            const fromPos = getTopCenterXY(fromEl);
-            const toPos = getTopCenterXY(toEl);
+            const fromPos = getCenterCenterXY(fromEl);
+            const toPos = getCenterCenterXY(toEl);
 
-            ctx.strokeStyle = holding.resource ? 'red' : 'black';
+            let style;
+            switch (cycler.state) {
+              case 'BUSY':
+                style = 'red';
+                break;
+              case 'FINISH':
+                style = 'green';
+                break;
+              default:
+                style = 'gray';
+                break;
+            }
+
+            ctx.strokeStyle = style;
             ctx.beginPath();
             ctx.moveTo(fromPos[0], fromPos[1]);
             ctx.lineTo(toPos[0], toPos[1]);

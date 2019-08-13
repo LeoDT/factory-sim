@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
 
-import { Slot } from '../slot';
-import { useStore } from './store';
+import { Slot } from '../core/slot';
 
 interface Props {
   slot: Slot;
@@ -10,13 +9,6 @@ interface Props {
 
 export default function Slot({ slot }: Props) {
   const ref = React.useRef<HTMLDivElement>(null);
-  const store = useStore();
-
-  React.useEffect(() => {
-    if (ref.current) {
-      store.updateSlotUIElement(slot, ref.current);
-    }
-  });
 
   return (
     <div

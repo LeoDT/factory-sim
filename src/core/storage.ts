@@ -2,10 +2,11 @@ import { observable, IObservableObject } from 'mobx';
 
 import { storageData, StorageTypeJSON } from '~/data/storageType';
 import { range } from '~/utils/range';
+import { generateShortId } from '~utils/shortid';
 
 import { Slot, makeSlot, slotCanAcceptResource } from './slot';
 import { Resource } from './resource';
-import { generateShortId } from '~utils/shortid';
+import { makePort, Port } from './port';
 
 export interface StorageType {
   id: number;
@@ -17,6 +18,7 @@ export interface StorageType {
 export interface Storage extends IObservableObject {
   id: string;
   storageType: StorageType;
+  port: Port;
   slots: Slot[];
 }
 
@@ -41,11 +43,15 @@ export function getStorageTypeById(storageTypeId: number): StorageType | undefin
 }
 
 export function makeStorage(storageType: StorageType, id: string = generateShortId()): Storage {
+  const slots = range(storageType.slots).map(() => makeSlot([], storageType.slotCapacity));
+
   return observable.object(
     {
       id,
       storageType,
-      slots: range(storageType.slots).map(() => makeSlot([], storageType.slotCapacity))
+
+      port: makePort(slots),
+      slots
     },
     {},
     {
