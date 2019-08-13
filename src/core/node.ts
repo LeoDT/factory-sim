@@ -20,6 +20,7 @@ import {
   slotCanAffordResource
 } from './slot';
 import { makePort, Port } from './port';
+import { Cycler, makeCycler } from './cycler';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -43,7 +44,7 @@ export interface Node extends IObservableObject {
   // n slots, n = all output's unique requirements length,
   storageSlots: Slot[];
 
-  currentCycle: number;
+  cycler: Cycler;
 }
 
 const nodeTypes = new Map<number, NodeType>();
@@ -90,7 +91,7 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
       outSlots,
       storageSlots,
 
-      currentCycle: 0
+      cycler: makeCycler(nodeType.cycle)
     },
     {},
     { deep: false }
@@ -104,38 +105,48 @@ export function findStorageSlotForResource(node: Node, resource: Resource): Slot
 }
 
 export function runNode(node: Node): void {
-  // product
-  const requiredResources = getRequiredResourcesForResources(node.nodeType.output);
-  const enoughResources = requiredResources.every(r => {
-    const storage = findStorageSlotForResource(node, r);
-    return storage && slotCanAffordResource(storage, r);
-  });
-  const enoughOutputSlots = node.outSlots.every(s => !s.resource);
-
-  if (enoughResources && node.currentCycle === 0) {
-    requiredResources.forEach(r => {
-      const slot = findStorageSlotForResource(node, r);
-
-      if (slot) {
-        takeResourceOutSlot(slot, r);
-      }
-    });
-    node.currentCycle += 1;
-  } else if (node.currentCycle === node.nodeType.cycle - 1) {
-    if (enoughOutputSlots) {
-      const outputResources = node.nodeType.output.map(r => makeResource(r.resourceType, r.amount));
-
-      outputResources.forEach(r => {
-        const slot = node.outSlots.find(s => slotCanAcceptResource(s, r));
-
-        if (slot) {
-          putResourceInSlot(slot, r);
-        }
+  switch (node.cycler.state) {
+    case 'IDLE':
+      const requiredResources = getRequiredResourcesForResources(node.nodeType.output);
+      const enoughResources = requiredResources.every(r => {
+        const storage = findStorageSlotForResource(node, r);
+        return storage && slotCanAffordResource(storage, r);
       });
-      node.currentCycle = 0;
-    }
-  } else if (node.currentCycle > 0) {
-    node.currentCycle += 1;
+
+      if (enoughResources) {
+        requiredResources.forEach(r => {
+          const slot = findStorageSlotForResource(node, r);
+
+          if (slot) {
+            takeResourceOutSlot(slot, r);
+          }
+        });
+
+        node.cycler.tick();
+      }
+      break;
+
+    case 'FINISH':
+      const enoughOutputSlots = node.outSlots.every(s => !s.resource);
+      if (enoughOutputSlots) {
+        const outputResources = node.nodeType.output.map(r =>
+          makeResource(r.resourceType, r.amount)
+        );
+
+        outputResources.forEach(r => {
+          const slot = node.outSlots.find(s => slotCanAcceptResource(s, r));
+
+          if (slot) {
+            putResourceInSlot(slot, r);
+          }
+        });
+
+        node.cycler.tick();
+      }
+      break;
+    default:
+      node.cycler.tick();
+      break;
   }
 }
 
