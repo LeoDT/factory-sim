@@ -4,7 +4,7 @@ import { drawClock } from '~core/clocks';
 import { getCenterCenterXY } from '~utils/draw';
 import { useStore } from './store';
 
-export default function Links() {
+export default function Links(): JSX.Element {
   const store = useStore();
   const canvas = React.useRef<HTMLCanvasElement>(null);
 
@@ -15,7 +15,7 @@ export default function Links() {
       const subs = drawClock.subscribe(() => {
         ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
-        store.links.forEach(({ from, to, holding, cycler }) => {
+        store.links.forEach(({ from, to, cycler }) => {
           const fromEl = store.portUIElements.get(from);
           const toEl = store.portUIElements.get(to);
 

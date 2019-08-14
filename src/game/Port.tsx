@@ -9,7 +9,7 @@ interface Props {
   type: 'in' | 'out' | 'all';
 }
 
-export default function Port({ port, type }: Props) {
+export default function Port({ port, type }: Props): JSX.Element {
   const store = useStore();
 
   return (

@@ -1,7 +1,11 @@
 export function getTopCenterXY(el: HTMLElement): [number, number] {
-  return [el.offsetLeft + el.offsetWidth / 2, el.offsetTop];
+  const rect = el.getBoundingClientRect();
+
+  return [rect.left + rect.width / 2, rect.top];
 }
 
 export function getCenterCenterXY(el: HTMLElement): [number, number] {
-  return [el.offsetLeft + el.offsetWidth / 2, el.offsetTop + el.offsetHeight / 2];
+  const rect = el.getBoundingClientRect();
+
+  return [rect.left + rect.width / 2, rect.top + rect.height / 2];
 }

@@ -1,5 +1,7 @@
 #+SEQ_TODO: TODO(t) | DONE(d!)  CANCELED(c@)
 
+* Play
+Blokus?
 * Concepts
 ** Resource
 *** Properties
@@ -34,6 +36,8 @@
 * Todos
 ** DONE port
    - State "DONE"       from "TODO"       [2019-08-13 Tue 14:11]
-** TODO pause
+** DONE pause
+   - State "DONE"       from "TODO"       [2019-08-14 Wed 13:33]
 ** DONE cycler
    - State "DONE"       from "TODO"       [2019-08-13 Tue 15:22]
+** TODO tile

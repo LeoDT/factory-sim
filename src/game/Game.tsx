@@ -8,7 +8,7 @@ import Node from './Node';
 import Storage from './Storage';
 import Links from './Links';
 
-function Game() {
+function Game(): JSX.Element {
   const store = useStore();
 
   return (

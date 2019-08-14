@@ -7,7 +7,7 @@ interface Props {
   slot: Slot;
 }
 
-export default function Slot({ slot }: Props) {
+export default function Slot({ slot }: Props): JSX.Element {
   const ref = React.useRef<HTMLDivElement>(null);
 
   return (
