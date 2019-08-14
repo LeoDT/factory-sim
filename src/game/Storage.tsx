@@ -3,6 +3,7 @@ import { Observer } from 'mobx-react-lite';
 import { Storage } from '~core/storage';
 import Slot from './Slot';
 import { useStore } from './store';
+import Port from './port';
 
 interface Props {
   storage: Storage;
@@ -15,12 +16,7 @@ export default function Storage({ storage }: Props) {
     <div className="p-3 border border-indigo-200	bg-white rounded m-3">
       <h4 className="text-xl">{storage.storageType.name}</h4>
       <div className="mt-3 flex justify-center">
-        <div
-          className="h-2 w-2 bg-red-300 rounded-full"
-          ref={c => {
-            if (c) store.updatePortUIElement(storage.port, c);
-          }}
-        />
+        <Port port={storage.port} type="all" />
       </div>
       <div className="flex mt-3 flex-wrap">
         <Observer>
