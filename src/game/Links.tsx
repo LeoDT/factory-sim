@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import { drawClock } from '~core/observables';
+import { drawClock } from '~core/clocks';
 import { getCenterCenterXY } from '~utils/draw';
 import { useStore } from './store';
 

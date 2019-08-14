@@ -3,7 +3,7 @@ import { observable, IObservableObject } from 'mobx';
 import { nodeData, NodeTypeJSON } from '~/data/nodeType';
 import { generateShortId } from '~utils/shortid';
 
-import { globalClock } from './observables';
+import { runClock } from './clocks';
 
 import {
   Resource,
@@ -153,7 +153,7 @@ export function runNode(node: Node): void {
 export function makeAndStartNode(nodeType: NodeType): Node {
   const node = makeNode(nodeType);
 
-  globalClock.subscribe(() => {
+  runClock.subscribe(() => {
     runNode(node);
   });
 

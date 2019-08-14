@@ -5,6 +5,7 @@ import { NodeType, Node, makeAndStartNode, getNodeTypeById } from '~core/node';
 import { Link, makeAndStartLink } from '~core/link';
 import { Storage, makeStorage, StorageType, getStorageTypeById } from '~core/storage';
 import { Port } from '~core/port';
+import { sendToGlobals } from '~utils/debug';
 
 class Store {
   public nodes = observable.array<Node>([], { deep: false });
@@ -51,13 +52,6 @@ export function useStore(): Store {
   return useContext(StoreContext);
 }
 
-declare global {
-  interface Window {
-    store: Store;
-  }
-}
-window.store = store;
-
 export function mock(): void {
   const nodeType1 = getNodeTypeById(1);
   const nodeType2 = getNodeTypeById(2);
@@ -79,3 +73,7 @@ export function mock(): void {
 }
 
 module.hot.accept();
+
+if (process.env.NODE_ENV === 'development') {
+  sendToGlobals({ store });
+}

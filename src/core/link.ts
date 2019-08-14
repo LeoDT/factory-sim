@@ -2,7 +2,7 @@ import { observable, IObservableObject } from 'mobx';
 
 import { generateShortId } from '~utils/shortid';
 
-import { globalClock } from './observables';
+import { runClock } from './clocks';
 import { Slot, makeSlot, putResourceInSlot, takeResourceOutSlot } from './slot';
 import { makeResource } from './resource';
 import {
@@ -75,7 +75,7 @@ export function runLink(link: Link): void {
 export function makeAndStartLink(from: Port, to: Port): Link {
   const link = makeLink(from, to);
 
-  globalClock.subscribe(() => {
+  runClock.subscribe(() => {
     runLink(link);
   });
 
