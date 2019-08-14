@@ -12,7 +12,7 @@ loadResourceTypes();
 loadNodeTypes();
 loadStorageTypes();
 
-function renderGame() {
+function renderGame(): void {
   mock();
   render(<Game />, document.getElementById('game'));
 }
