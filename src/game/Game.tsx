@@ -14,9 +14,11 @@ import Node from './Node';
 import Storage from './Storage';
 import Links from './Links';
 
+const TILE_SIZE = 40;
+
 function Game(): JSX.Element {
   const [store] = React.useState(() => new Store());
-  const [nodeTileScene] = React.useState(() => makeTileScene(20));
+  const [nodeTileScene] = React.useState(() => makeTileScene(TILE_SIZE));
 
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
@@ -51,7 +53,7 @@ function Game(): JSX.Element {
   return (
     <StoreContext.Provider value={store}>
       <TileSceneContext.Provider value={nodeTileScene}>
-        <div>
+        <div className="select">
           <Links />
           <Observer>
             {() => (

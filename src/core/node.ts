@@ -21,6 +21,7 @@ import {
 } from './slot';
 import { makePort, Port } from './port';
 import { Cycler, makeCycler } from './cycler';
+import { TileArea, TileGroup, makeTileGroup } from './tile';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -31,6 +32,7 @@ export interface NodeType {
   resourceRequirements: Resource[];
   output: Resource[];
   cycle: number;
+  tiles: TileArea[];
 }
 
 export interface Node extends IObservableObject {
@@ -45,6 +47,7 @@ export interface Node extends IObservableObject {
   storageSlots: Slot[];
 
   cycler: Cycler;
+  tileGroup: TileGroup;
 }
 
 const nodeTypes = new Map<number, NodeType>();
@@ -91,7 +94,8 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
       outSlots,
       storageSlots,
 
-      cycler: makeCycler(nodeType.cycle)
+      cycler: makeCycler(nodeType.cycle),
+      tileGroup: makeTileGroup([0, 0], nodeType.tiles)
     },
     {},
     { deep: false }

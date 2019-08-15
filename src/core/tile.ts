@@ -1,9 +1,6 @@
 import { observable, IObservableObject } from 'mobx';
 
-export interface Tile {
-  x: number;
-  y: number;
-}
+export type Tile = Vector2;
 
 export interface TileArea {
   lt: Tile; // left top tile
@@ -11,7 +8,8 @@ export interface TileArea {
 }
 
 export interface TileGroup {
-  tiles: Array<Tile | TileArea>;
+  tile: Tile;
+  areas: TileArea[];
 }
 
 export interface TileScene extends IObservableObject {
@@ -21,7 +19,14 @@ export interface TileScene extends IObservableObject {
 }
 
 export function makeTile(x: number, y: number): Tile {
-  return { x, y };
+  return [x, y];
+}
+
+export function makeTileGroup(tile: Tile, areas: TileArea[]): TileGroup {
+  return {
+    tile,
+    areas
+  };
 }
 
 export function makeTileScene(tileSize: number): TileScene {
@@ -47,8 +52,9 @@ export function getSnappedPosition(tileScene: TileScene, position: Vector2): Vec
 
 export function getPositionForTile(tileScene: TileScene, tile: Tile): Vector2 {
   const { tileSize } = tileScene;
+  const [x, y] = tile;
 
-  return [tile.x * tileSize, tile.y * tileSize];
+  return [x * tileSize, y * tileSize];
 }
 
 export function getTileForPosition(tileScene: TileScene, position: Vector2): Tile {
@@ -56,4 +62,29 @@ export function getTileForPosition(tileScene: TileScene, position: Vector2): Til
   const [x, y] = position;
 
   return makeTile(Math.floor(x / tileSize), Math.floor(y / tileSize));
+}
+
+export function getTileGroupSize(tileScene: TileScene, tileGroup: TileGroup): Vector2 {
+  const { tileSize } = tileScene;
+  const { areas } = tileGroup;
+
+  if (areas.length < 1) throw new Error('tile group must have 1 tile area at least');
+
+  let leftTop: Vector2 = areas[0].lt;
+  let rightBottom: Vector2 = areas[0].rb;
+
+  areas.forEach(({ lt, rb }) => {
+    if (lt[0] < leftTop[0] || lt[1] < leftTop[1]) {
+      leftTop = lt;
+    }
+
+    if (rb[0] > rightBottom[0] || rb[1] > rightBottom[1]) {
+      rightBottom = rb;
+    }
+  });
+
+  return [
+    (rightBottom[0] - leftTop[0] + 1) * tileSize,
+    (rightBottom[1] - leftTop[1] + 1) * tileSize
+  ];
 }

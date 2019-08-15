@@ -7,12 +7,14 @@ import { generateShortId } from '~utils/shortid';
 import { Slot, makeSlot, slotCanAcceptResource } from './slot';
 import { Resource } from './resource';
 import { makePort, Port } from './port';
+import { TileArea, TileGroup, makeTileGroup } from './tile';
 
 export interface StorageType {
   id: number;
   name: string;
   slots: number;
   slotCapacity: number;
+  tiles: TileArea[];
 }
 
 export interface Storage extends IObservableObject {
@@ -20,6 +22,7 @@ export interface Storage extends IObservableObject {
   storageType: StorageType;
   port: Port;
   slots: Slot[];
+  tileGroup: TileGroup;
 }
 
 const storageTypes = new Map<number, StorageType>();
@@ -51,7 +54,8 @@ export function makeStorage(storageType: StorageType, id: string = generateShort
       storageType,
 
       port: makePort(slots),
-      slots
+      slots,
+      tileGroup: makeTileGroup([0, 0], storageType.tiles)
     },
     {},
     {

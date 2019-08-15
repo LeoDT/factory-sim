@@ -5,7 +5,11 @@ import { Link, makeAndStartLink } from '~core/link';
 import { Storage, makeStorage, StorageType } from '~core/storage';
 import { Port } from '~core/port';
 
+import UI from './ui';
+
 export class Store {
+  public ui = new UI();
+
   public nodes = observable.array<Node>([], { deep: false });
   public links = observable.array<Link>([], { deep: false });
   public storages = observable.array<Storage>([], { deep: false });

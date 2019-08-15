@@ -1,4 +1,4 @@
-import { Observable, Subject, BehaviorSubject, EMPTY } from 'rxjs';
+import { Observable, Subject, BehaviorSubject, EMPTY, fromEvent } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 
 export function pausableObservable<T>(
@@ -20,4 +20,10 @@ export function pausableObservable<T>(
       pauser.next(false);
     }
   };
+}
+
+export function windowResize(): Observable<Event> {
+  const resize = fromEvent(window, 'resize');
+
+  return resize;
 }
