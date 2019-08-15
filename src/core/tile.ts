@@ -42,7 +42,7 @@ export function getSnappedPosition(tileScene: TileScene, position: Vector2): Vec
   const { tileSize } = tileScene;
   const [x, y] = position;
 
-  return [Math.floor(x / tileSize), Math.floor(y / tileSize)];
+  return [Math.floor(x / tileSize) * tileSize, Math.floor(y / tileSize) * tileSize];
 }
 
 export function getPositionForTile(tileScene: TileScene, tile: Tile): Vector2 {
@@ -52,7 +52,8 @@ export function getPositionForTile(tileScene: TileScene, tile: Tile): Vector2 {
 }
 
 export function getTileForPosition(tileScene: TileScene, position: Vector2): Tile {
-  const [x, y] = getSnappedPosition(tileScene, position);
+  const { tileSize } = tileScene;
+  const [x, y] = position;
 
-  return makeTile(x, y);
+  return makeTile(Math.floor(x / tileSize), Math.floor(y / tileSize));
 }
