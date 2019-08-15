@@ -5,7 +5,6 @@ import { loadResourceTypes } from './core/resource';
 import { loadNodeTypes } from './core/node';
 import { loadStorageTypes } from './core/storage';
 
-import { mock } from './game/store';
 import Game from './game/Game';
 
 loadResourceTypes();
@@ -13,7 +12,6 @@ loadNodeTypes();
 loadStorageTypes();
 
 function renderGame(): void {
-  mock();
   render(<Game />, document.getElementById('game'));
 }
 

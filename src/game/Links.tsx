@@ -2,7 +2,7 @@ import * as React from 'react';
 
 import { drawClock } from '~core/clocks';
 import { getCenterCenterXY } from '~utils/draw';
-import { useStore } from './store';
+import { useStore } from './context';
 
 export default function Links(): JSX.Element {
   const store = useStore();

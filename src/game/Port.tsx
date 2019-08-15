@@ -2,7 +2,7 @@ import * as React from 'react';
 import classnames from 'classnames';
 
 import { Port } from '~core/port';
-import { useStore } from './store';
+import { useStore } from './context';
 
 interface Props {
   port: Port;
