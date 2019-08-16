@@ -22,6 +22,7 @@ import {
 import { makePort, Port } from './port';
 import { Cycler, makeCycler } from './cycler';
 import { TileArea, TileGroup, makeTileGroup } from './tile';
+import { sendToGlobals } from '~utils/debug';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -30,6 +31,7 @@ export interface NodeType {
   id: number;
   name: string;
   resourceRequirements: Resource[];
+  resourcesForRun: Resource[];
   output: Resource[];
   cycle: number;
   tiles: TileArea[];
@@ -52,18 +54,23 @@ export interface Node extends IObservableObject {
 
 const nodeTypes = new Map<number, NodeType>();
 
+sendToGlobals({ nodeTypes });
+
 export function loadNodeTypes(): void {
   const json: NodeTypeJSON = JSON.parse(nodeData);
 
   json.forEach(({ resourceRequirements, output, ...more }) => {
+    const mappedOutput = (output || []).map(({ resourceTypeId, amount = 1 }) =>
+      makeResourceWithTypeId(resourceTypeId, amount)
+    );
+
     const nodeType: NodeType = {
       ...more,
       resourceRequirements: (resourceRequirements || []).map(({ resourceTypeId, amount }) =>
         makeResourceWithTypeId(resourceTypeId, amount)
       ),
-      output: (output || []).map(({ resourceTypeId, amount = 1 }) =>
-        makeResourceWithTypeId(resourceTypeId, amount)
-      )
+      output: mappedOutput,
+      resourcesForRun: getRequiredResourcesForResources(mappedOutput)
     };
 
     nodeTypes.set(nodeType.id, nodeType);
@@ -77,9 +84,9 @@ export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
 }
 
 export function makeNode(nodeType: NodeType, id: string = generateShortId()): Node {
-  const resourcesForProduce = getRequiredResourcesForResources(nodeType.output);
+  const { resourcesForRun } = nodeType;
   const outSlots = nodeType.output.map(r => makeSlot([r.resourceType], r.amount));
-  const storageSlots = resourcesForProduce.map(r =>
+  const storageSlots = resourcesForRun.map(r =>
     makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
   );
 
@@ -111,14 +118,14 @@ export function findStorageSlotForResource(node: Node, resource: Resource): Slot
 export function runNode(node: Node): void {
   switch (node.cycler.state) {
     case 'IDLE':
-      const requiredResources = getRequiredResourcesForResources(node.nodeType.output);
-      const enoughResources = requiredResources.every(r => {
+      const { resourcesForRun } = node.nodeType;
+      const enoughResources = resourcesForRun.every(r => {
         const storage = findStorageSlotForResource(node, r);
         return storage && slotCanAffordResource(storage, r);
       });
 
       if (enoughResources) {
-        requiredResources.forEach(r => {
+        resourcesForRun.forEach(r => {
           const slot = findStorageSlotForResource(node, r);
 
           if (slot) {

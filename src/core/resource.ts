@@ -52,7 +52,7 @@ export function makeResource(resourceType: ResourceType, amount: number): Resour
       resourceType,
       amount
     },
-    {},
+    { resourceType: observable.ref },
     { deep: false }
   );
 }
