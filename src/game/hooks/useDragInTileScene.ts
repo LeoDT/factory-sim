@@ -1,32 +1,83 @@
 import { MutableRefObject } from 'react';
 import { useDrag } from 'react-use-gesture';
 
-import { getSnappedPosition } from '~core/tile';
+import {
+  getSnappedPosition,
+  getTileForPosition,
+  TileGroup,
+  canTileGroupMoveToTile,
+  getPositionForTile
+} from '~core/tile';
 import { useTileScene } from '~game/context';
 
 export function useDragInTileScene(
-  elRef: MutableRefObject<HTMLElement | null>
+  elRef: MutableRefObject<HTMLElement | null>,
+  tileGroup: TileGroup,
+  options: {
+    onDragStart?: () => void;
+    onDrag?: (canDrop: boolean) => void;
+    onDragEnd?: () => void;
+    onDropSuccess?: (tile: Vector2) => void;
+    onDropReset?: () => void;
+  }
 ): ReturnType<typeof useDrag> {
   const tileScene = useTileScene();
-  const dragBind = useDrag(({ initial, xy, memo = { toLeft: 0, toTop: 0, inited: false } }) => {
-    if (elRef.current) {
-      const el = elRef.current;
+  const dragBind = useDrag(
+    ({ initial, xy, last, first, memo = { toLeft: 0, toTop: 0, inited: false } }) => {
+      if (elRef.current) {
+        if (first) {
+          if (options.onDragStart) {
+            options.onDragStart();
+          }
+        }
 
-      if (!memo.inited) {
-        const { top, left } = el.getBoundingClientRect();
+        const el = elRef.current;
 
-        memo.toLeft = initial[0] - left;
-        memo.toTop = initial[1] - top;
-        memo.inited = true;
+        if (!memo.inited) {
+          const { top, left } = el.getBoundingClientRect();
+
+          memo.toLeft = initial[0] - left;
+          memo.toTop = initial[1] - top;
+          memo.inited = true;
+        }
+
+        const p = getSnappedPosition(tileScene, [xy[0] - memo.toLeft, xy[1] - memo.toTop]);
+
+        el.style.transform = `translate3D(${p[0]}px, ${p[1]}px, 0)`;
+
+        const newTile = getTileForPosition(tileScene, p);
+        const canDrop = canTileGroupMoveToTile(tileScene, tileGroup, newTile);
+
+        if (last) {
+          if (canDrop) {
+            if (options.onDropSuccess) {
+              options.onDropSuccess(newTile);
+            }
+          } else {
+            const oldP = getSnappedPosition(
+              tileScene,
+              getPositionForTile(tileScene, tileGroup.tile)
+            );
+            el.style.transform = `translate3D(${oldP[0]}px, ${oldP[1]}px, 0)`;
+
+            if (options.onDropReset) {
+              options.onDropReset();
+            }
+          }
+
+          if (options.onDragEnd) {
+            options.onDragEnd();
+          }
+        } else {
+          if (options.onDrag) {
+            options.onDrag(canDrop);
+          }
+        }
+
+        return memo;
       }
-
-      const [x, y] = getSnappedPosition(tileScene, [xy[0] - memo.toLeft, xy[1] - memo.toTop]);
-
-      el.style.transform = `translate3D(${x}px, ${y}px, 0)`;
-
-      return memo;
     }
-  });
+  );
 
   return dragBind;
 }

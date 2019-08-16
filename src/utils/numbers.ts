@@ -1,4 +1,4 @@
-export function clamp(n: number, min: number, max: number): number {
+export function clamp(n: number, min: number, max: number = Infinity): number {
   if (n < min) {
     return min;
   }
