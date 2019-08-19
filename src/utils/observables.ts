@@ -22,8 +22,11 @@ export function pausableObservable<T>(
   };
 }
 
-export function windowResize(): Observable<Event> {
+export function windowResize(): BehaviorSubject<Event | null> {
   const resize = fromEvent(window, 'resize');
+  const behavior = new BehaviorSubject<Event | null>(null);
 
-  return resize;
+  resize.subscribe(behavior);
+
+  return behavior;
 }

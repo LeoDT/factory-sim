@@ -10,6 +10,8 @@ import { makePort, Port } from './port';
 import { TileArea, TileGroup, makeTileGroup } from './tile';
 
 export interface StorageType {
+  _type: 'StorageType';
+
   id: number;
   name: string;
   slots: number;
@@ -18,6 +20,8 @@ export interface StorageType {
 }
 
 export interface Storage extends IObservableObject {
+  _type: 'Storage';
+
   id: string;
   storageType: StorageType;
   port: Port;
@@ -32,6 +36,7 @@ export function loadStorageTypes(): void {
 
   json.forEach(j => {
     const storageType: StorageType = {
+      _type: 'StorageType',
       ...j
     };
 
@@ -50,6 +55,8 @@ export function makeStorage(storageType: StorageType, id: string = generateShort
 
   return observable.object(
     {
+      _type: 'Storage',
+
       id,
       storageType,
 

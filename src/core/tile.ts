@@ -16,6 +16,7 @@ export interface TileGroup {
 
 export interface TileScene extends IObservableObject {
   tileSize: number;
+  offset: Vector2;
 
   tileGroups: IObservableArray<TileGroup>;
 }
@@ -32,10 +33,11 @@ export function makeTileGroup(tile: Tile, areas: TileArea[]): TileGroup {
   };
 }
 
-export function makeTileScene(tileSize: number): TileScene {
+export function makeTileScene(tileSize: number, offset: Vector2 = [0, 0]): TileScene {
   return observable.object(
     {
       tileSize,
+      offset,
 
       tileGroups: observable.array([], { deep: false })
     },

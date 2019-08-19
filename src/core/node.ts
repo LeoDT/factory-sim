@@ -28,6 +28,8 @@ import { sendToGlobals } from '~utils/debug';
 const NODE_STORAGE_MULTIPLIER = 5;
 
 export interface NodeType {
+  _type: 'NodeType';
+
   id: number;
   name: string;
   resourceRequirements: Resource[];
@@ -38,6 +40,8 @@ export interface NodeType {
 }
 
 export interface Node extends IObservableObject {
+  _type: 'Node';
+
   nodeType: NodeType;
   id: string;
 
@@ -66,6 +70,7 @@ export function loadNodeTypes(): void {
 
     const nodeType: NodeType = {
       ...more,
+      _type: 'NodeType',
       resourceRequirements: (resourceRequirements || []).map(({ resourceTypeId, amount }) =>
         makeResourceWithTypeId(resourceTypeId, amount)
       ),
@@ -90,8 +95,9 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
     makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
   );
 
-  const node = observable.object(
+  return observable.object(
     {
+      _type: 'Node',
       nodeType,
       id,
 
@@ -107,8 +113,6 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
     {},
     { deep: false }
   );
-
-  return node;
 }
 
 export function findStorageSlotForResource(node: Node, resource: Resource): Slot | undefined {

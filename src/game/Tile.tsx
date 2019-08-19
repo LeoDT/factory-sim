@@ -1,5 +1,6 @@
 import classnames from 'classnames';
 import * as React from 'react';
+import { TransformedEvent } from 'react-use-gesture/dist/types';
 
 import { TileGroup, getTileGroupSize } from '~core/tile';
 
@@ -9,9 +10,17 @@ import { useDragInTileScene } from './hooks/useDragInTileScene';
 interface Props {
   children: JSX.Element | null;
   tileGroup: TileGroup;
+  highlight?: boolean;
+
+  onDragStart?: (e?: TransformedEvent) => void;
 }
 
-export default function Tile({ children, tileGroup }: Props): JSX.Element {
+export default function Tile({
+  children,
+  tileGroup,
+  highlight = false,
+  onDragStart
+}: Props): JSX.Element {
   const tileScene = useTileScene();
   const size = React.useMemo(() => getTileGroupSize(tileScene, tileGroup), [tileGroup]);
   const [canDrop, setCanDrop] = React.useState(true);
@@ -19,7 +28,11 @@ export default function Tile({ children, tileGroup }: Props): JSX.Element {
 
   const ref = React.useRef<HTMLDivElement | null>(null);
   const dragBind = useDragInTileScene(ref, tileGroup, {
-    onDragStart: () => {
+    onDragStart: e => {
+      if (onDragStart) {
+        onDragStart(e);
+      }
+
       setDragging(true);
     },
     onDrag: (c: boolean) => {
@@ -53,7 +66,7 @@ export default function Tile({ children, tileGroup }: Props): JSX.Element {
       className={classnames(
         'p-3 border bg-white rounded fixed top-0 left-0',
         canDrop ? 'border-indigo-200' : 'border-red-500',
-        { 'z-40 opacity-50': dragging }
+        { 'z-40 opacity-50': dragging, 'shadow-outline': highlight }
       )}
       style={{ width: size[0], height: size[1] }}
       ref={ref}

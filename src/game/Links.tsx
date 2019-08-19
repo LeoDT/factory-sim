@@ -4,9 +4,12 @@ import { drawClock } from '~core/clocks';
 import { getCenterCenterXY } from '~utils/draw';
 import { useStore } from './context';
 
-export default function Links(): JSX.Element {
+interface Props {
+  getCanvas: () => React.RefObject<HTMLCanvasElement>;
+}
+
+export default function Links({ getCanvas }: Props): JSX.Element | null {
   const store = useStore();
-  const canvas = React.useRef<HTMLCanvasElement>(null);
   const draw = React.useCallback(
     ctx => {
       ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
@@ -44,6 +47,8 @@ export default function Links(): JSX.Element {
   );
 
   React.useEffect(() => {
+    const canvas = getCanvas();
+
     if (canvas.current) {
       const ctx = canvas.current.getContext('2d') as CanvasRenderingContext2D;
 
@@ -55,14 +60,7 @@ export default function Links(): JSX.Element {
         subs.unsubscribe();
       };
     }
-  }, []);
+  }, [getCanvas]);
 
-  return (
-    <canvas
-      className="absolute top-0 left-0 pointer-events-none z-50"
-      ref={canvas}
-      height={window.innerHeight}
-      width={window.innerWidth}
-    />
-  );
+  return null;
 }

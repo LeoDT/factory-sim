@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Observer } from 'mobx-react-lite';
 import { hot } from 'react-hot-loader';
 
 import { makeTileScene } from '~core/tile';
@@ -10,9 +9,8 @@ import { sendToGlobals } from '~utils/debug';
 import { TileSceneContext, StoreContext } from './context';
 import { Store } from './store';
 
-import Node from './Node';
-import Storage from './Storage';
-import Links from './Links';
+import Scene from './Scene';
+import Status from './Status';
 
 const TILE_SIZE = 40;
 
@@ -53,24 +51,22 @@ function Game(): JSX.Element {
   return (
     <StoreContext.Provider value={store}>
       <TileSceneContext.Provider value={tileScene}>
-        <div className="select">
-          <Links />
-          <Observer>
-            {() => (
-              <>
-                <div className="p-3 flex items-start justify-start">
-                  {store.nodes.map(n => (
-                    <Node node={n} key={n.id} />
-                  ))}
-                </div>
-                <div className="p-3 flex items-start justify-start">
-                  {store.storages.map(s => (
-                    <Storage storage={s} key={s.id} />
-                  ))}
-                </div>
-              </>
-            )}
-          </Observer>
+        <div
+          className="relative h-screen w-screen"
+          onMouseDown={(e: React.BaseSyntheticEvent<MouseEvent, HTMLDivElement>) => {
+            const { ui } = store;
+
+            if (ui.selectedEl && !ui.selectedEl.contains(e.target) && ui.selectedEl !== e.target) {
+              ui.unselect();
+            }
+          }}
+        >
+          <div className="relative h-screen w-screen pb-12">
+            <Scene />
+          </div>
+          <div className="absolute left-0 bottom-0 h-12 w-screen bg-gray-300">
+            <Status />
+          </div>
         </div>
       </TileSceneContext.Provider>
     </StoreContext.Provider>

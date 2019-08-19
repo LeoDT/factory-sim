@@ -1,5 +1,6 @@
 import { MutableRefObject } from 'react';
 import { useDrag } from 'react-use-gesture';
+import { TransformedEvent } from 'react-use-gesture/dist/types';
 
 import {
   getSnappedPosition,
@@ -14,7 +15,7 @@ export function useDragInTileScene(
   elRef: MutableRefObject<HTMLElement | null>,
   tileGroup: TileGroup,
   options: {
-    onDragStart?: () => void;
+    onDragStart?: (e?: TransformedEvent) => void;
     onDrag?: (canDrop: boolean) => void;
     onDragEnd?: () => void;
     onDropSuccess?: (tile: Vector2) => void;
@@ -23,11 +24,11 @@ export function useDragInTileScene(
 ): ReturnType<typeof useDrag> {
   const tileScene = useTileScene();
   const dragBind = useDrag(
-    ({ initial, xy, last, first, memo = { toLeft: 0, toTop: 0, inited: false } }) => {
+    ({ event, initial, xy, last, first, memo = { toLeft: 0, toTop: 0, inited: false } }) => {
       if (elRef.current) {
         if (first) {
           if (options.onDragStart) {
-            options.onDragStart();
+            options.onDragStart(event);
           }
         }
 
