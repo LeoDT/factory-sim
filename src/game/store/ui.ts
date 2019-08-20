@@ -4,6 +4,7 @@ import { windowResize } from '~utils/observables';
 
 import { Storage } from '~core/storage';
 import { Node } from '~core/node';
+import { Port } from '~core/port';
 
 type Selectable = Node | Storage;
 
@@ -22,4 +23,6 @@ export default class UI {
     this.selected.set(null);
     this.selectedEl = null;
   }
+
+  public linkStartPort = observable.box<Port | null>(null, { deep: false });
 }

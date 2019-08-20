@@ -36,3 +36,16 @@ export function portSlotCanAcceptResource(port: Port, resource: Resource): Slot 
 export function portSlotCanAffordResource(port: Port, resource: Resource): Slot | undefined {
   return port.slots.find(s => slotCanAffordResource(s, resource));
 }
+
+export function canPortsBeLinked(from: Port, to: Port): boolean {
+  if (from === to) return false;
+
+  const fromResourceTypes = from.slots.map(s => s.resourceTypes).reduce((a, t) => a.concat(t), []);
+  const toResourceTypes = to.slots.map(s => s.resourceTypes).reduce((a, t) => a.concat(t), []);
+
+  if (to.slots.length > 0 && toResourceTypes.length === 0) {
+    return true;
+  }
+
+  return fromResourceTypes.some(t => toResourceTypes.indexOf(t) !== -1);
+}

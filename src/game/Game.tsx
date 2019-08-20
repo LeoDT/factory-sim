@@ -32,7 +32,7 @@ function Game(): JSX.Element {
       const storageType = getStorageTypeById(1);
 
       if (nodeType1 && nodeType2 && nodeType3 && storageType) {
-        const node1 = store.addNode(nodeType1);
+        /* const node1 = store.addNode(nodeType1);
         const node2 = store.addNode(nodeType2);
         const storage = store.addStorage(storageType);
         store.addLink(node1.outPort, storage.port);
@@ -41,7 +41,7 @@ function Game(): JSX.Element {
 
         const node3 = store.addNode(nodeType3);
         store.addLink(storage.port, node3.inPort);
-        store.addLink(node3.outPort, storage.port);
+        store.addLink(node3.outPort, storage.port); */
       }
     }
 
@@ -58,6 +58,12 @@ function Game(): JSX.Element {
 
             if (ui.selectedEl && !ui.selectedEl.contains(e.target) && ui.selectedEl !== e.target) {
               ui.unselect();
+            }
+
+            if (ui.linkStartPort.get()) {
+              setTimeout(() => {
+                ui.linkStartPort.set(null);
+              }, 100);
             }
           }}
         >
