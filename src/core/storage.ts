@@ -29,7 +29,7 @@ export interface Storage extends IObservableObject {
   tileGroup: TileGroup;
 }
 
-const storageTypes = new Map<number, StorageType>();
+export const storageTypes = new Map<number, StorageType>();
 
 export function loadStorageTypes(): void {
   const json: StorageTypeJSON = JSON.parse(storageData);

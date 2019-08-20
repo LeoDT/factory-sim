@@ -56,7 +56,7 @@ export interface Node extends IObservableObject {
   tileGroup: TileGroup;
 }
 
-const nodeTypes = new Map<number, NodeType>();
+export const nodeTypes = new Map<number, NodeType>();
 
 sendToGlobals({ nodeTypes });
 

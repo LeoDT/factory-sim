@@ -43,3 +43,4 @@ Blokus?
 ** DONE tile
    - State "DONE"       from "TODO"       [2019-08-16 Fri 14:03]
 ** TODO CanvasContext if more things need to draw
+** TODO simple ui to add and link nodes
