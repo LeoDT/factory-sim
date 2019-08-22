@@ -21,7 +21,7 @@ import {
 } from './slot';
 import { makePort, Port } from './port';
 import { Cycler, makeCycler } from './cycler';
-import { TileArea, TileGroup, makeTileGroup } from './tile';
+import { TileArea, TileGroup, makeTileGroup, TileShape } from './tile';
 import { sendToGlobals } from '~utils/debug';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
@@ -37,6 +37,7 @@ export interface NodeType {
   output: Resource[];
   cycle: number;
   tiles: TileArea[];
+  shape: TileShape;
 }
 
 export interface Node extends IObservableObject {
@@ -108,7 +109,7 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
       storageSlots,
 
       cycler: makeCycler(nodeType.cycle),
-      tileGroup: makeTileGroup([0, 0], nodeType.tiles)
+      tileGroup: makeTileGroup([0, 0], nodeType.shape)
     },
     {},
     { deep: false }

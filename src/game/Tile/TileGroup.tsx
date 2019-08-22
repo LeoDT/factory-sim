@@ -4,8 +4,10 @@ import { TransformedEvent } from 'react-use-gesture/dist/types';
 
 import { TileGroup, getTileGroupSize } from '~core/tile';
 
-import { useTileScene } from './context';
-import { useDragInTileScene } from './hooks/useDragInTileScene';
+import { useTileScene } from '../context';
+import { useDragInTileScene } from '../hooks/useDragInTileScene';
+
+import TileArea from './TileArea';
 
 interface Props {
   children: JSX.Element | null;
@@ -22,7 +24,7 @@ export default function Tile({
   onDragStart
 }: Props): JSX.Element {
   const tileScene = useTileScene();
-  const size = React.useMemo(() => getTileGroupSize(tileScene, tileGroup), [tileGroup]);
+  const size = React.useMemo(() => getTileGroupSize(tileScene, tileGroup), [tileScene, tileGroup]);
   const [canDrop, setCanDrop] = React.useState(true);
   const [dragging, setDragging] = React.useState(false);
 
@@ -64,14 +66,18 @@ export default function Tile({
   return (
     <div
       className={classnames(
-        'p-3 border bg-white rounded fixed top-0 left-0',
+        'fixed top-0 left-0',
         canDrop ? 'border-indigo-200' : 'border-red-500',
-        { 'z-40 opacity-50': dragging, 'shadow-outline': highlight }
+        { 'z-40 opacity-50': dragging, 'shadow-outline1': highlight }
       )}
       style={{ width: size[0], height: size[1] }}
       ref={ref}
-      {...dragBind()}
     >
+      <div className="absolute top-0 left0">
+        {tileGroup.areas.map((a, i) => (
+          <TileArea area={a} key={i} dragBind={dragBind} />
+        ))}
+      </div>
       {children}
     </div>
   );

@@ -4,7 +4,7 @@ import { Observer } from 'mobx-react-lite';
 import { Storage } from '~core/storage';
 
 import Port from './port';
-import Tile from './Tile';
+import TileGroup from './Tile/TileGroup';
 import { useStore } from './context';
 
 interface Props {
@@ -17,7 +17,7 @@ export default function Storage({ storage }: Props): JSX.Element {
   return (
     <Observer>
       {() => (
-        <Tile
+        <TileGroup
           tileGroup={storage.tileGroup}
           onDragStart={e => {
             if (e) {
@@ -32,7 +32,7 @@ export default function Storage({ storage }: Props): JSX.Element {
               <Port port={storage.port} type="all" />
             </div>
           </div>
-        </Tile>
+        </TileGroup>
       )}
     </Observer>
   );

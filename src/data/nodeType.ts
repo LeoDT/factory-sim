@@ -7,7 +7,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 1, amount: 5 }],
     output: [{ resourceTypeId: 1 }],
     cycle: 2,
-    tiles: [{ lt: [0, 0], rb: [1, 0] }]
+    shape: [[1, 1], [1, 0]]
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 1, amount: 10 }],
     output: [{ resourceTypeId: 2 }],
     cycle: 4,
-    tiles: [{ lt: [0, 0], rb: [1, 1] }]
+    shape: [[1, 1], [0, 1], [1, 1]]
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 2, amount: 2 }],
     output: [{ resourceTypeId: 3 }],
     cycle: 7,
-    tiles: [{ lt: [0, 0], rb: [2, 2] }]
+    shape: [[0, 1], [0, 1], [1, 1]]
   }
 ]);
 
@@ -34,6 +34,7 @@ export type NodeTypeJSON = Array<{
   output?: Array<{ resourceTypeId: number; amount?: number }>;
   cycle: number;
   tiles: TileArea[];
+  shape: Array<Array<0 | 1>>;
 }>;
 
 export { data as nodeData };
