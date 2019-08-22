@@ -1,0 +1,21 @@
+@import '../styles/variables.scss';
+
+.tile-group {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  &.dragging {
+    opacity: 0.5;
+  }
+
+  .tile-areas {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  .tile-area {
+    background-color: $blue-300;
+  }
+}

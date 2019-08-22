@@ -27,7 +27,6 @@ export default function Storage({ storage }: Props): JSX.Element {
           highlight={ui.selected.get() === storage}
         >
           <div>
-            <h4 className="text-xl hidden">{storage.storageType.name}</h4>
             <div className="flex justify-center">
               <Port port={storage.port} type="all" />
             </div>

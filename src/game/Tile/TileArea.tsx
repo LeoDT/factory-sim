@@ -20,7 +20,7 @@ export default function TileArea({ area, dragBind }: Props): JSX.Element {
 
   return (
     <div
-      className="bg-blue-300"
+      className="tile-area"
       {...dragBind()}
       style={{
         width: dimension.size[0],

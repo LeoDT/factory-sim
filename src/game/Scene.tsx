@@ -1,3 +1,5 @@
+import './Scene.scss';
+
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
 
@@ -27,25 +29,18 @@ export default function Scene(): JSX.Element {
   }, []);
 
   return (
-    <div className="relative select-none h-full">
-      <canvas
-        className="absolute top-0 left-0 h-full w-full z-20 pointer-events-none"
-        ref={canvasRef}
-      />
+    <div className="scene">
+      <canvas className="draw-canvas" ref={canvasRef} />
       <Links getCanvas={getCanvas} />
       <Observer>
         {() => (
           <>
-            <div className="p-3 flex items-start justify-start">
-              {store.nodes.map(n => (
-                <Node node={n} key={n.id} />
-              ))}
-            </div>
-            <div className="p-3 flex items-start justify-start">
-              {store.storages.map(s => (
-                <Storage storage={s} key={s.id} />
-              ))}
-            </div>
+            {store.nodes.map(n => (
+              <Node node={n} key={n.id} />
+            ))}
+            {store.storages.map(s => (
+              <Storage storage={s} key={s.id} />
+            ))}
           </>
         )}
       </Observer>

@@ -1,3 +1,5 @@
+import './TileGroup.scss';
+
 import classnames from 'classnames';
 import * as React from 'react';
 import { TransformedEvent } from 'react-use-gesture/dist/types';
@@ -64,14 +66,14 @@ export default function Tile({
 
   return (
     <div
-      className={classnames(
-        'fixed top-0 left-0',
-        canDrop ? 'border-indigo-200' : 'border-red-500',
-        { 'z-40 opacity-50': dragging, 'shadow-outline1': highlight }
-      )}
+      className={classnames('tile-group', {
+        'can-not-drop': !canDrop,
+        dragging,
+        highlight
+      })}
       ref={ref}
     >
-      <div className="absolute top-0 left0">
+      <div className="tile-areas">
         {tileGroup.areas.map((a, i) => (
           <TileArea area={a} key={i} dragBind={dragBind} />
         ))}

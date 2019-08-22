@@ -1,3 +1,5 @@
+import './Game.scss';
+
 import * as React from 'react';
 import { hot } from 'react-hot-loader';
 
@@ -26,7 +28,7 @@ function Game(): JSX.Element {
     <StoreContext.Provider value={store}>
       <TileSceneContext.Provider value={tileScene}>
         <div
-          className="relative h-screen w-screen"
+          className="game"
           onMouseDown={(e: React.BaseSyntheticEvent<MouseEvent, HTMLDivElement>) => {
             const { ui } = store;
 
@@ -41,10 +43,10 @@ function Game(): JSX.Element {
             }
           }}
         >
-          <div className="relative h-screen w-screen pb-12">
+          <div className="main-scene">
             <Scene />
           </div>
-          <div className="absolute left-0 bottom-0 h-12 w-screen bg-gray-300">
+          <div className="main-status">
             <Status />
           </div>
         </div>

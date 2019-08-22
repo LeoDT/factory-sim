@@ -27,7 +27,6 @@ export default function Node({ node }: Props): JSX.Element {
           highlight={ui.selected.get() === node}
         >
           <div>
-            <h4 className="text-xl hidden">{node.nodeType.name}</h4>
             <div className="flex justify-between">
               <Port port={node.inPort} type="in" />
               <Port port={node.outPort} type="out" />

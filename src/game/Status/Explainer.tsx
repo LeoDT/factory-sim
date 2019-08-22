@@ -75,10 +75,7 @@ export default function Explainer(): JSX.Element {
           }
 
           return (
-            <div
-              className="p-3 absolute top-0 right-0 bg-green-100"
-              style={{ transform: 'translate(0, -100%)' }}
-            >
+            <div className="status-explainer" style={{ transform: 'translate(0, -100%)' }}>
               {c}
             </div>
           );
