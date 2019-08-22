@@ -2,7 +2,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { TransformedEvent } from 'react-use-gesture/dist/types';
 
-import { TileGroup, getTileGroupSize } from '~core/tile';
+import { TileGroup } from '~core/tile';
 
 import { useTileScene } from '../context';
 import { useDragInTileScene } from '../hooks/useDragInTileScene';
@@ -24,7 +24,6 @@ export default function Tile({
   onDragStart
 }: Props): JSX.Element {
   const tileScene = useTileScene();
-  const size = React.useMemo(() => getTileGroupSize(tileScene, tileGroup), [tileScene, tileGroup]);
   const [canDrop, setCanDrop] = React.useState(true);
   const [dragging, setDragging] = React.useState(false);
 
@@ -70,7 +69,6 @@ export default function Tile({
         canDrop ? 'border-indigo-200' : 'border-red-500',
         { 'z-40 opacity-50': dragging, 'shadow-outline1': highlight }
       )}
-      style={{ width: size[0], height: size[1] }}
       ref={ref}
     >
       <div className="absolute top-0 left0">

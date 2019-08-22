@@ -19,7 +19,6 @@ export interface TileGroup {
 
   shapeRect: Vector2;
   areas: TileArea[];
-  mergedArea: TileArea;
 }
 
 export interface TileScene extends IObservableObject {
@@ -41,8 +40,7 @@ export function makeTileGroup(tile: Tile, shape: TileShape, collisionGroup: numb
     shape,
     shapeRect: getShapeRect(shape),
     areas,
-    collisionGroup,
-    mergedArea: mergeTileAreas(areas)
+    collisionGroup
   };
 }
 
@@ -133,29 +131,6 @@ export function getTileAreaTileSize({ lt, rb }: TileArea): Vector2 {
 
 export function getTileAreaSize({ tileSize }: TileScene, area: TileArea): Vector2 {
   return getTileAreaTileSize(area).map(d => d * tileSize) as Vector2;
-}
-
-export function mergeTileAreas(areas: TileArea[]): TileArea {
-  if (areas.length < 1) throw new Error('tile group must have 1 tile area at least');
-
-  let leftTop: Tile = areas[0].lt;
-  let rightBottom: Tile = areas[0].rb;
-
-  areas.forEach(({ lt, rb }) => {
-    if (lt[0] < leftTop[0] || lt[1] < leftTop[1]) {
-      leftTop = lt;
-    }
-
-    if (rb[0] > rightBottom[0] || rb[1] > rightBottom[1]) {
-      rightBottom = rb;
-    }
-  });
-
-  return { lt: leftTop, rb: rightBottom };
-}
-
-export function getTileGroupSize(tileScene: TileScene, tileGroup: TileGroup): Vector2 {
-  return getTileAreaTileSize(tileGroup.mergedArea).map(d => d * tileScene.tileSize) as Vector2;
 }
 
 export function tileGroupCollisionTest(aGroup: TileGroup, bGroup: TileGroup): boolean {
