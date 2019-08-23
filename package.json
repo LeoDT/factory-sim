@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "scripts": {
     "start": "parcel src/index.html",
-    "build": "parcel build src/index.html --public-url ./factory-sim/ --no-source-maps"
+    "build": "parcel build src/index.html --public-url ./ --no-source-maps"
   },
   "main": "index.js",
   "author": "LeoDT <leojoy710@gmail.com>",
