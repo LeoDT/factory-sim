@@ -1,29 +1,30 @@
+import './Slot.scss';
+
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
 
 import { Slot } from '../core/slot';
+import TileGroup from './Tile/TileGroup';
+import { useTileScene, useStore } from './context';
 
 interface Props {
   slot: Slot;
+  isTile?: boolean;
 }
 
-export default function Slot({ slot }: Props): JSX.Element {
-  const ref = React.useRef<HTMLDivElement>(null);
+export default function Slot({ slot, isTile = true }: Props): JSX.Element {
+  const store = useStore();
+  const tileScene = useTileScene();
 
-  return (
-    <div
-      className="m-1 border border-gray-300 relative h-10 w-10 text-center bg-gray-100"
-      ref={ref}
-    >
+  const slotEl = (
+    <div className="slot" style={{ width: tileScene.tileSize, height: tileScene.tileSize }}>
       <Observer>
         {() => (
           <>
             {slot.resource ? (
               <>
-                <div className="text-2xl">{slot.resource.resourceType.icon}</div>
-                <div className="absolute text-xs bottom-0 right-0 font-mono">
-                  {slot.resource.amount}
-                </div>
+                <div className="icon">{slot.resource.resourceType.icon}</div>
+                <div className="amount">{slot.resource.amount}</div>
               </>
             ) : null}
           </>
@@ -31,4 +32,20 @@ export default function Slot({ slot }: Props): JSX.Element {
       </Observer>
     </div>
   );
+
+  if (isTile) {
+    return (
+      <TileGroup
+        className="slot-tile-group"
+        tileGroup={slot.tileGroup}
+        onDragSuccess={() => {
+          store.checkThingInBoards(slot);
+        }}
+      >
+        {slotEl}
+      </TileGroup>
+    );
+  }
+
+  return slotEl;
 }

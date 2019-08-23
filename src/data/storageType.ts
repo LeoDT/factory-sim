@@ -1,5 +1,3 @@
-import { TileArea } from '~core/tile';
-
 const data = JSON.stringify([
   {
     id: 1,
@@ -15,7 +13,6 @@ export type StorageTypeJSON = Array<{
   name: string;
   slots: number;
   slotCapacity: number;
-  tiles: TileArea[];
   shape: Array<Array<0 | 1>>;
 }>;
 

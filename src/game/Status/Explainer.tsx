@@ -22,13 +22,13 @@ export default function Explainer(): JSX.Element {
                 <div>
                   <h4>{selected.nodeType.name}</h4>
 
-                  <div className="flex mt-3">
-                    <div className="flex-grow">
+                  <div className="slots">
+                    <div className="in-slots">
                       <Observer>
                         {() => (
                           <>
                             {selected.storageSlots.map((slot, i) => (
-                              <Slot key={i} slot={slot} />
+                              <Slot key={i} slot={slot} isTile={false} />
                             ))}
                           </>
                         )}
@@ -39,7 +39,7 @@ export default function Explainer(): JSX.Element {
                         {() => (
                           <>
                             {selected.outSlots.map((slot, i) => (
-                              <Slot key={i} slot={slot} />
+                              <Slot key={i} slot={slot} isTile={false} />
                             ))}
                           </>
                         )}
@@ -55,17 +55,25 @@ export default function Explainer(): JSX.Element {
                 <div>
                   <h4>{selected.storageType.name}</h4>
 
-                  <div className="flex mt-3 flex-wrap">
+                  <div className="slots">
                     <Observer>
                       {() => (
                         <>
                           {selected.slots.map((slot, i) => (
-                            <Slot key={i} slot={slot} />
+                            <Slot key={i} slot={slot} isTile={false} />
                           ))}
                         </>
                       )}
                     </Observer>
                   </div>
+                </div>
+              );
+              break;
+
+            case 'Board':
+              c = (
+                <div>
+                  <h4>{selected.boardType.name}</h4>
                 </div>
               );
               break;

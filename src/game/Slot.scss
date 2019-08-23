@@ -1,0 +1,27 @@
+@import './styles/variables.scss';
+
+.slot-tile-group {
+  .tile-area {
+    background-color: transparent;
+  }
+}
+
+.slot {
+  position: relative;
+  background-color: $gray-200;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .icon {
+    font-size: $text-2xl;
+    line-height: 1;
+  }
+
+  .amount {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    font-size: $text-s;
+  }
+}

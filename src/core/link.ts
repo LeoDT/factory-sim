@@ -9,7 +9,7 @@ import {
   Port,
   portSlotCanAcceptResource,
   portSlotCanAffordResource,
-  getPortDefaultResource
+  getNonEmptyPortResources
 } from './port';
 import { Cycler, makeCycler } from './cycler';
 
@@ -27,7 +27,7 @@ export function makeLink(from: Port, to: Port, id: string = generateShortId()): 
       id,
       from,
       to,
-      holding: makeSlot([], 1),
+      holding: makeSlot([], undefined, 1),
       cycler: makeCycler(3)
     },
     {},
@@ -38,9 +38,9 @@ export function makeLink(from: Port, to: Port, id: string = generateShortId()): 
 export function runLink(link: Link): void {
   switch (link.cycler.state) {
     case 'IDLE':
-      const fromResource = getPortDefaultResource(link.from);
+      const fromResources = getNonEmptyPortResources(link.from);
 
-      if (fromResource) {
+      fromResources.forEach(fromResource => {
         const resource = makeResource(fromResource.resourceType, 1);
         const fromSlot = portSlotCanAffordResource(link.from, resource);
 
@@ -50,7 +50,8 @@ export function runLink(link: Link): void {
 
           link.cycler.tick();
         }
-      }
+      });
+
       break;
 
     case 'FINISH':

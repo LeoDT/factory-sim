@@ -7,6 +7,8 @@ import { useStore } from './context';
 import Links from './Links';
 import Node from './Node';
 import Storage from './Storage';
+import Board from './Board';
+import Slot from './Slot';
 
 export default function Scene(): JSX.Element {
   const store = useStore();
@@ -37,6 +39,12 @@ export default function Scene(): JSX.Element {
           <>
             {store.nodes.map(n => (
               <Node node={n} key={n.id} />
+            ))}
+            {store.boards.map(b => (
+              <Board board={b} key={b.id} />
+            ))}
+            {store.slots.map(s => (
+              <Slot slot={s} key={s.id} />
             ))}
             {store.storages.map(s => (
               <Storage storage={s} key={s.id} />

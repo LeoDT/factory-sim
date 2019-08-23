@@ -6,11 +6,13 @@ import { render } from 'react-dom';
 import { loadResourceTypes } from './core/resource';
 import { loadNodeTypes } from './core/node';
 import { loadStorageTypes } from './core/storage';
+import { loadBoardTypes } from '~core/board';
 
 import Game from './game/Game';
 
 loadResourceTypes();
 loadNodeTypes();
+loadBoardTypes();
 loadStorageTypes();
 
 function renderGame(): void {

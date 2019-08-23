@@ -1,5 +1,3 @@
-import { TileArea } from '~core/tile';
-
 const data = JSON.stringify([
   {
     id: 1,
@@ -33,7 +31,6 @@ export type NodeTypeJSON = Array<{
   resourceRequirements?: Array<{ resourceTypeId: number; amount: number }>;
   output?: Array<{ resourceTypeId: number; amount?: number }>;
   cycle: number;
-  tiles: TileArea[];
   shape: Array<Array<0 | 1>>;
 }>;
 

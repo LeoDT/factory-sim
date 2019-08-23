@@ -12,10 +12,10 @@ export interface TileArea {
   rb: Tile; // right bottom tile
 }
 
-export interface TileGroup {
+export interface TileGroup extends IObservableObject {
   tile: Tile;
   shape: TileShape;
-  collisionGroup: number; // collision happens to same group
+  layer: number; // collision happens to same layer, and bigger layer got bigger z
 
   shapeRect: Vector2;
   areas: TileArea[];
@@ -32,16 +32,20 @@ export function makeTile(x: number, y: number): Tile {
   return [x, y];
 }
 
-export function makeTileGroup(tile: Tile, shape: TileShape, collisionGroup: number = 0): TileGroup {
+export function makeTileGroup(tile: Tile, shape: TileShape, layer: number = 0): TileGroup {
   const areas = convertShapeToAreas(shape);
 
-  return {
-    tile,
-    shape,
-    shapeRect: getShapeRect(shape),
-    areas,
-    collisionGroup
-  };
+  return observable.object(
+    {
+      tile,
+      shape,
+      shapeRect: getShapeRect(shape),
+      areas,
+      layer
+    },
+    {},
+    { deep: false }
+  );
 }
 
 export function makeTileScene(tileSize: number, offset: Vector2 = [0, 0]): TileScene {
@@ -133,8 +137,12 @@ export function getTileAreaSize({ tileSize }: TileScene, area: TileArea): Vector
   return getTileAreaTileSize(area).map(d => d * tileSize) as Vector2;
 }
 
+export function getTileGroupsOffset(aGroup: TileGroup, bGroup: TileGroup): Vector2 {
+  return [bGroup.tile[0] - aGroup.tile[0], bGroup.tile[1] - aGroup.tile[1]];
+}
+
 export function tileGroupCollisionTest(aGroup: TileGroup, bGroup: TileGroup): boolean {
-  if (aGroup.collisionGroup !== bGroup.collisionGroup) {
+  if (aGroup.layer !== bGroup.layer) {
     return false;
   }
 
@@ -162,7 +170,7 @@ export function tileGroupCollisionTest(aGroup: TileGroup, bGroup: TileGroup): bo
 }
 
 export function tileGroupContainsAnother(parent: TileGroup, child: TileGroup): boolean {
-  if (parent.collisionGroup === child.collisionGroup) {
+  if (parent.layer === child.layer) {
     return false;
   }
 

@@ -5,8 +5,9 @@ import { windowResize } from '~utils/observables';
 import { Storage } from '~core/storage';
 import { Node } from '~core/node';
 import { Port } from '~core/port';
+import { Board } from '~core/board';
 
-type Selectable = Node | Storage;
+type Selectable = Node | Storage | Board;
 
 export default class UI {
   public windowResize = windowResize();

@@ -7,7 +7,7 @@ import { generateShortId } from '~utils/shortid';
 import { Slot, makeSlot, slotCanAcceptResource } from './slot';
 import { Resource } from './resource';
 import { makePort, Port } from './port';
-import { TileArea, TileGroup, makeTileGroup, TileShape } from './tile';
+import { TileGroup, makeTileGroup, TileShape } from './tile';
 
 export interface StorageType {
   _type: 'StorageType';
@@ -16,7 +16,6 @@ export interface StorageType {
   name: string;
   slots: number;
   slotCapacity: number;
-  tiles: TileArea[];
   shape: TileShape;
 }
 
@@ -52,7 +51,9 @@ export function getStorageTypeById(storageTypeId: number): StorageType | undefin
 }
 
 export function makeStorage(storageType: StorageType, id: string = generateShortId()): Storage {
-  const slots = range(storageType.slots).map(() => makeSlot([], storageType.slotCapacity));
+  const slots = range(storageType.slots).map(() =>
+    makeSlot([], undefined, storageType.slotCapacity)
+  );
 
   return observable.object(
     {

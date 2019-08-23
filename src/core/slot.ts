@@ -1,20 +1,37 @@
 import { observable, IObservableObject } from 'mobx';
 
 import { ResourceType, Resource, makeResource } from './resource';
+import { TileGroup, makeTileGroup } from './tile';
+import { LAYERS } from './layer';
+import { generateShortId } from '~utils/shortid';
 
 export interface Slot extends IObservableObject {
+  _type: 'Slot';
+  id: string;
   // empty means any type
   resourceTypes: ResourceType[];
+  tileGroup: TileGroup;
+
   capacity: number;
   resource?: Resource;
   lockedResource?: Resource;
 }
 
-export function makeSlot(resourceTypes: ResourceType[] = [], capacity: number = 1): Slot {
+export function makeSlot(
+  resourceTypes: ResourceType[] = [],
+  tile: Vector2 = [-1, -1],
+  capacity: number = 1
+): Slot {
   return observable.object(
     {
+      _type: 'Slot',
+      id: generateShortId(),
       resourceTypes,
-      capacity
+      capacity,
+      tileGroup: makeTileGroup(tile, [[1]], LAYERS.slot),
+      get invisible() {
+        return this.tileGroup.tile[0] === -1;
+      }
     },
     {
       resourceTypes: observable.ref

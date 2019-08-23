@@ -2,6 +2,7 @@ import { observable, IObservableObject } from 'mobx';
 
 import { nodeData, NodeTypeJSON } from '~/data/nodeType';
 import { generateShortId } from '~utils/shortid';
+import { sendToGlobals } from '~utils/debug';
 
 import { runClock } from './clocks';
 
@@ -21,8 +22,8 @@ import {
 } from './slot';
 import { makePort, Port } from './port';
 import { Cycler, makeCycler } from './cycler';
-import { TileArea, TileGroup, makeTileGroup, TileShape } from './tile';
-import { sendToGlobals } from '~utils/debug';
+import { TileGroup, makeTileGroup, TileShape } from './tile';
+import { LAYERS } from './layer';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -36,7 +37,6 @@ export interface NodeType {
   resourcesForRun: Resource[];
   output: Resource[];
   cycle: number;
-  tiles: TileArea[];
   shape: TileShape;
 }
 
@@ -91,9 +91,9 @@ export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
 
 export function makeNode(nodeType: NodeType, id: string = generateShortId()): Node {
   const { resourcesForRun } = nodeType;
-  const outSlots = nodeType.output.map(r => makeSlot([r.resourceType], r.amount));
+  const outSlots = nodeType.output.map(r => makeSlot([r.resourceType], undefined, r.amount));
   const storageSlots = resourcesForRun.map(r =>
-    makeSlot([r.resourceType], r.amount * NODE_STORAGE_MULTIPLIER)
+    makeSlot([r.resourceType], undefined, r.amount * NODE_STORAGE_MULTIPLIER)
   );
 
   return observable.object(
@@ -109,7 +109,7 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
       storageSlots,
 
       cycler: makeCycler(nodeType.cycle),
-      tileGroup: makeTileGroup([0, 0], nodeType.shape)
+      tileGroup: makeTileGroup([0, 0], nodeType.shape, LAYERS.node)
     },
     {},
     { deep: false }

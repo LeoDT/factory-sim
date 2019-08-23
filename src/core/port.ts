@@ -21,12 +21,16 @@ export function makePort(slots: Slot[], id: string = generateShortId()): Port {
   );
 }
 
-export function getPortDefaultResource(port: Port): Resource | undefined {
-  const nonEmptySlot = port.slots.find(s => s.resource);
+export function getNonEmptyPortResources(port: Port): Resource[] {
+  const resources: Resource[] = [];
 
-  if (nonEmptySlot) {
-    return nonEmptySlot.resource;
-  }
+  port.slots.forEach(s => {
+    if (s.resource) {
+      resources.push(s.resource);
+    }
+  });
+
+  return resources;
 }
 
 export function portSlotCanAcceptResource(port: Port, resource: Resource): Slot | undefined {

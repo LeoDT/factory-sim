@@ -1,25 +1,26 @@
 import * as React from 'react';
 
 import { nodeTypes } from '~core/node';
-import { storageTypes } from '~core/storage';
 import { useStore } from '~game/context';
+import { boardTypes } from '~core/board';
+import { pauseRunClock, resumeRunClock } from '~core/clocks';
 
 export default function Tools(): JSX.Element {
   const store = useStore();
-  const nodes: JSX.Element[] = [];
-  const storages: JSX.Element[] = [];
+  const [paused, setPaused] = React.useState(false);
+  const buttons: JSX.Element[] = [];
 
   nodeTypes.forEach(t => {
-    nodes.push(
-      <div className="button" key={t.id} onClick={() => store.addNode(t)}>
+    buttons.push(
+      <div className="button" key={`node-${t.id}`} onClick={() => store.addNode(t)}>
         {t.name}
       </div>
     );
   });
 
-  storageTypes.forEach(t => {
-    storages.push(
-      <div className="button" key={t.id} onClick={() => store.addStorage(t)}>
+  boardTypes.forEach(t => {
+    buttons.push(
+      <div className="button" key={`board-${t.id}`} onClick={() => store.addBoard(t)}>
         {t.name}
       </div>
     );
@@ -27,8 +28,23 @@ export default function Tools(): JSX.Element {
 
   return (
     <div className="status-tools">
-      {nodes}
-      {storages}
+      {buttons}
+      <div style={{ marginLeft: 'auto' }}>
+        <div
+          className="button pause"
+          onClick={() => {
+            if (paused) {
+              resumeRunClock();
+              setPaused(false);
+            } else {
+              pauseRunClock();
+              setPaused(true);
+            }
+          }}
+        >
+          {paused ? 'Resume' : 'Pause'}
+        </div>
+      </div>
     </div>
   );
 }

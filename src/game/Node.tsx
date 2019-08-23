@@ -12,19 +12,23 @@ interface Props {
 }
 
 export default function Node({ node }: Props): JSX.Element {
-  const { ui } = useStore();
+  const store = useStore();
 
   return (
     <Observer>
       {() => (
         <TileGroup
+          className="node-tile-group"
           tileGroup={node.tileGroup}
           onDragStart={e => {
             if (e) {
-              ui.select(node, e.currentTarget as Element);
+              store.ui.select(node, e.currentTarget as Element);
             }
           }}
-          highlight={ui.selected.get() === node}
+          onDragSuccess={() => {
+            store.checkThingInBoards(node);
+          }}
+          highlight={store.ui.selected.get() === node}
         >
           <div>
             <div className="flex justify-between">

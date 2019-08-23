@@ -10,12 +10,21 @@
   h4 {
     margin: 0 0 spacing(2) 0;
   }
+
+  .slots {
+    display: flex;
+
+    .in-slots {
+      flex-grow: 1;
+    }
+  }
 }
 
 .status-tools {
   display: flex;
   padding: 0 spacing(2);
   align-items: center;
+  justify-content: flex-start;
   height: 100%;
 
   .button {
@@ -28,7 +37,16 @@
 
     &:hover {
       cursor: pointer;
-      background-color: $gray-100;
+      background-color: $blue-100;
+    }
+
+    &.pause {
+      border-color: $red-500;
+      color: $red-500;
+
+      &:hover {
+        background-color: $red-100;
+      }
     }
   }
 }
