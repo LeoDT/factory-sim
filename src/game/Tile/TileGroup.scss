@@ -16,9 +16,25 @@
   }
 
   .tile-area {
-    background-color: $blue-300;
+    background-color: $gray-300;
   }
   .children {
     position: relative;
+  }
+
+  &.red-500 {
+    .tile-area {
+      background-color: $red-500;
+    }
+  }
+  &.blue-500 {
+    .tile-area {
+      background-color: $blue-500;
+    }
+  }
+  &.green-500 {
+    .tile-area {
+      background-color: $green-500;
+    }
   }
 }

@@ -38,6 +38,7 @@ export interface NodeType {
   output: Resource[];
   cycle: number;
   shape: TileShape;
+  color: string;
 }
 
 export interface Node extends IObservableObject {

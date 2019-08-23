@@ -1,3 +1,4 @@
+import classnames from 'classnames';
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
 
@@ -18,7 +19,7 @@ export default function Node({ node }: Props): JSX.Element {
     <Observer>
       {() => (
         <TileGroup
-          className="node-tile-group"
+          className={classnames('node-tile-group', node.nodeType.color)}
           tileGroup={node.tileGroup}
           onDragStart={e => {
             if (e) {
