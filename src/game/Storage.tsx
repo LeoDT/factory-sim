@@ -3,7 +3,7 @@ import { Observer } from 'mobx-react-lite';
 
 import { Storage } from '~core/storage';
 
-import Port from './port';
+import Port from './Port';
 import TileGroup from './Tile/TileGroup';
 import { useStore } from './context';
 
