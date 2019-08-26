@@ -10,7 +10,8 @@ import { useTileScene } from '../context';
 import { useDragInTileScene } from '../hooks/useDragInTileScene';
 
 import TileArea from './TileArea';
-import { autorun } from 'mobx';
+import { autorun, runInAction } from 'mobx';
+import { addVector2, subVector2 } from '~utils/vector';
 
 interface Props {
   children?: JSX.Element | null;
@@ -52,7 +53,17 @@ export default function TileGroup({
       setDragging(false);
     },
     onDropSuccess: (tile: Vector2) => {
-      tileGroup.tile = tile;
+      runInAction(() => {
+        const moved = subVector2(tile, tileGroup.tile);
+
+        tileGroup.tile = tile;
+
+        if (tileGroup.children.length) {
+          tileGroup.children.forEach(cg => {
+            cg.tile = addVector2(cg.tile, moved);
+          });
+        }
+      });
 
       if (onDragSuccess) {
         onDragSuccess();
@@ -66,10 +77,12 @@ export default function TileGroup({
   });
 
   React.useEffect(() => {
-    tileScene.tileGroups.push(tileGroup);
+    if (ref.current) {
+      tileScene.tileGroups.set(tileGroup, ref.current);
+    }
 
     return () => {
-      tileScene.tileGroups.remove(tileGroup);
+      tileScene.tileGroups.delete(tileGroup);
     };
   }, [tileGroup]);
 

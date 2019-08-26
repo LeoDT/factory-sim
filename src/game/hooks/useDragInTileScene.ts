@@ -7,9 +7,11 @@ import {
   getTileForPosition,
   TileGroup,
   canTileGroupMoveToTile,
-  getPositionForTile
+  getPositionForTile,
+  dragTileGroupToPosition
 } from '~core/tile';
 import { useTileScene } from '~game/context';
+import { sameVector2 } from '~utils/vector';
 
 export function useDragInTileScene(
   elRef: MutableRefObject<HTMLElement | null>,
@@ -24,7 +26,14 @@ export function useDragInTileScene(
 ): ReturnType<typeof useDrag> {
   const tileScene = useTileScene();
   const dragBind = useDrag(
-    ({ event, initial, xy, last, first, memo = { toLeft: 0, toTop: 0, inited: false } }) => {
+    ({
+      event,
+      initial,
+      xy,
+      last,
+      first,
+      memo = { toLeft: 0, toTop: 0, inited: false, tile: tileGroup.tile, canDrop: false }
+    }) => {
       if (elRef.current) {
         if (first) {
           if (options.onDragStart) {
@@ -44,22 +53,27 @@ export function useDragInTileScene(
 
         const p = getSnappedPosition(tileScene, [xy[0] - memo.toLeft, xy[1] - memo.toTop]);
 
-        el.style.transform = `translate3D(${p[0]}px, ${p[1]}px, 0)`;
+        dragTileGroupToPosition(tileScene, tileGroup, p);
 
         const newTile = getTileForPosition(tileScene, p);
-        const canDrop = canTileGroupMoveToTile(tileScene, tileGroup, newTile);
+
+        if (!sameVector2(memo.tile, newTile)) {
+          memo.canDrop = canTileGroupMoveToTile(tileScene, tileGroup, newTile);
+        }
+
+        memo.tile = newTile;
 
         if (last) {
-          if (canDrop) {
+          if (memo.canDrop) {
             if (options.onDropSuccess) {
               options.onDropSuccess(newTile);
             }
           } else {
-            const oldP = getSnappedPosition(
+            dragTileGroupToPosition(
               tileScene,
+              tileGroup,
               getPositionForTile(tileScene, tileGroup.tile)
             );
-            el.style.transform = `translate3D(${oldP[0]}px, ${oldP[1]}px, 0)`;
 
             if (options.onDropReset) {
               options.onDropReset();
@@ -71,7 +85,7 @@ export function useDragInTileScene(
           }
         } else {
           if (options.onDrag) {
-            options.onDrag(canDrop);
+            options.onDrag(memo.canDrop);
           }
         }
 

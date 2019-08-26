@@ -1,4 +1,4 @@
-import { IObservableObject, observable, IObservableArray, runInAction } from 'mobx';
+import { IObservableObject, observable, IObservableArray, runInAction, reaction } from 'mobx';
 
 import { boardData, BoardTypeJSON } from '~/data/boardType';
 
@@ -68,7 +68,7 @@ export function loadBoardTypes(): void {
 }
 
 export function makeBoard(boardType: BoardType): Board {
-  return observable.object(
+  const board: Board = observable.object(
     {
       _type: 'Board',
       boardType,
@@ -118,6 +118,22 @@ export function makeBoard(boardType: BoardType): Board {
     {},
     { deep: false }
   );
+
+  reaction(
+    () => {
+      const groups = [];
+      for (const t of board.thingsOnBoard) {
+        groups.push(t.tileGroup);
+      }
+
+      return groups;
+    },
+    groups => {
+      board.tileGroup.children = groups;
+    }
+  );
+
+  return board;
 }
 
 export function runBoard(board: Board): void {

@@ -1,5 +1,7 @@
-import { observable, IObservableObject, IObservableArray } from 'mobx';
+import { observable, IObservableObject, ObservableMap } from 'mobx';
 import { clamp } from '~utils/numbers';
+import { transformTranslate } from '~utils/dom';
+import { addVector2, subVector2 } from '~utils/vector';
 
 export type Tile = Vector2;
 
@@ -19,13 +21,14 @@ export interface TileGroup extends IObservableObject {
 
   shapeRect: Vector2;
   areas: TileArea[];
+  children: TileGroup[];
 }
 
 export interface TileScene extends IObservableObject {
   tileSize: number;
   offset: Vector2;
 
-  tileGroups: IObservableArray<TileGroup>;
+  tileGroups: ObservableMap<TileGroup, HTMLElement>;
 }
 
 export function makeTile(x: number, y: number): Tile {
@@ -41,7 +44,8 @@ export function makeTileGroup(tile: Tile, shape: TileShape, layer: number = 0): 
       shape,
       shapeRect: getShapeRect(shape),
       areas,
-      layer
+      layer,
+      children: []
     },
     {},
     { deep: false }
@@ -54,7 +58,7 @@ export function makeTileScene(tileSize: number, offset: Vector2 = [0, 0]): TileS
       tileSize,
       offset,
 
-      tileGroups: observable.array([], { deep: false })
+      tileGroups: observable.map<TileGroup, HTMLElement>(new Map(), { deep: false })
     },
     {},
     {
@@ -138,7 +142,7 @@ export function getTileAreaSize({ tileSize }: TileScene, area: TileArea): Vector
 }
 
 export function getTileGroupsOffset(aGroup: TileGroup, bGroup: TileGroup): Vector2 {
-  return [bGroup.tile[0] - aGroup.tile[0], bGroup.tile[1] - aGroup.tile[1]];
+  return subVector2(bGroup.tile, aGroup.tile);
 }
 
 export function tileGroupCollisionTest(aGroup: TileGroup, bGroup: TileGroup): boolean {
@@ -210,9 +214,56 @@ export function tileGroupContainsAnother(parent: TileGroup, child: TileGroup): b
 export function canTileGroupMoveToTile(
   tileScene: TileScene,
   tileGroup: TileGroup,
-  tile: Tile
+  tile: Tile,
+  excludedTileGroup: TileGroup[] = []
 ): boolean {
   const newGroup = { ...tileGroup, tile };
 
-  return !tileScene.tileGroups.some(g => g !== tileGroup && tileGroupCollisionTest(g, newGroup));
+  for (const g of tileScene.tileGroups.keys()) {
+    if (
+      g !== tileGroup &&
+      excludedTileGroup.indexOf(g) === -1 &&
+      tileGroupCollisionTest(g, newGroup)
+    ) {
+      console.log('collided');
+      return false;
+    }
+
+    if (tileGroup.children.length) {
+      for (const cg of tileGroup.children) {
+        const newTile = addVector2(tile, getTileGroupsOffset(tileGroup, cg));
+
+        if (!canTileGroupMoveToTile(tileScene, cg, newTile, tileGroup.children)) {
+          return false;
+        }
+      }
+    }
+  }
+
+  return true;
+}
+
+export function dragTileGroupToPosition(
+  tileScene: TileScene,
+  tileGroup: TileGroup,
+  pos: Vector2
+): void {
+  const el = tileScene.tileGroups.get(tileGroup);
+
+  if (el) {
+    transformTranslate(el, pos);
+
+    if (tileGroup.children.length > 0) {
+      const children = tileGroup.children.map(g => ({
+        el: tileScene.tileGroups.get(g),
+        offset: getPositionForTile(tileScene, getTileGroupsOffset(tileGroup, g))
+      }));
+
+      for (const c of children) {
+        if (c.el && c.offset) {
+          transformTranslate(c.el, addVector2(pos, c.offset));
+        }
+      }
+    }
+  }
 }
