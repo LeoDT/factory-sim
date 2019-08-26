@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function Board({ board }: Props): JSX.Element {
-  const { ui } = useStore();
+  const store = useStore();
 
   return (
     <Observer>
@@ -23,10 +23,13 @@ export default function Board({ board }: Props): JSX.Element {
           tileGroup={board.tileGroup}
           onDragStart={e => {
             if (e) {
-              ui.select(board, e.currentTarget);
+              store.ui.select(board, e.currentTarget);
             }
           }}
-          highlight={ui.selected.get() === board}
+          onDragSuccess={() => {
+            store.checkBoardWrapThings(board);
+          }}
+          highlight={store.ui.selected.get() === board}
         />
       )}
     </Observer>

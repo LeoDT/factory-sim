@@ -1,4 +1,4 @@
-import { observable, autorun, IReactionDisposer } from 'mobx';
+import { observable, autorun, IReactionDisposer, decorate, computed } from 'mobx';
 
 import { NodeType, Node, makeAndStartNode } from '~core/node';
 import { Link, makeAndStartLink } from '~core/link';
@@ -25,6 +25,24 @@ export class Store {
   public storages = observable.array<Storage>([], { deep: false });
   public boards = observable.array<Board>([], { deep: false });
   public slots = observable.array<Slot>([], { deep: false });
+
+  public get thingsNotOnBoard(): ThingOnBoard[] {
+    const things: ThingOnBoard[] = [];
+
+    this.nodes.forEach(n => {
+      if (!this.boards.some(b => b.nodes.has(n))) {
+        things.push(n);
+      }
+    });
+
+    this.slots.forEach(s => {
+      if (!this.boards.some(b => b.slots.has(s))) {
+        things.push(s);
+      }
+    });
+
+    return things;
+  }
 
   private boardDisposers = new Map<Board, IReactionDisposer>();
 
@@ -86,6 +104,18 @@ export class Store {
     return board;
   }
 
+  public checkBoardWrapThings(b: Board): ThingOnBoard[] {
+    const things = this.thingsNotOnBoard.filter(t =>
+      tileGroupContainsAnother(b.tileGroup, t.tileGroup)
+    );
+
+    things.forEach(t => {
+      addThingToBoard(b, t);
+    });
+
+    return things;
+  }
+
   public portUIElements = observable.map<Port, HTMLElement>(new Map<Port, HTMLElement>(), {
     deep: false
   });
@@ -94,3 +124,7 @@ export class Store {
     this.portUIElements.set(port, e);
   }
 }
+
+decorate(Store, {
+  thingsNotOnBoard: computed
+});
