@@ -12,6 +12,7 @@ import { useDragInTileScene } from '../hooks/useDragInTileScene';
 import TileArea from './TileArea';
 import { autorun, runInAction } from 'mobx';
 import { addVector2, subVector2 } from '~utils/vector';
+import { LAYERS } from '~core/layer';
 
 interface Props {
   children?: JSX.Element | null;
@@ -106,7 +107,7 @@ export default function TileGroup({
         dragging,
         highlight
       })}
-      style={{ zIndex: tileGroup.layer }}
+      style={{ zIndex: dragging ? LAYERS.dragging : tileGroup.layer }}
       ref={ref}
     >
       <div className="tile-areas">

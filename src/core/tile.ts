@@ -225,7 +225,10 @@ export function canTileGroupMoveToTile(
       excludedTileGroup.indexOf(g) === -1 &&
       tileGroupCollisionTest(g, newGroup)
     ) {
-      console.log('collided');
+      if (process.env.NODE_ENV === 'development') {
+        console.debug('collision detected');
+      }
+
       return false;
     }
 
