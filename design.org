@@ -1,7 +1,7 @@
 #+SEQ_TODO: TODO(t) | DONE(d!)  CANCELED(c@)
 
 * Play
-Blokus?
+Blokus? Stage?
 * Concepts
 ** Resource
 *** Properties
@@ -49,4 +49,5 @@ Blokus?
    background-size: 40px 40px;
    background-image: linear-gradient(to right, grey 1px, transparent 1px), linear-gradient(to bottom, grey 1px, transparent 1px);
 ** TODO mutable tileScene?
-** TODO area to matrix
+** DONE area to matrix
+   - State "DONE"       from "TODO"       [2019-08-26 Mon 08:57]
