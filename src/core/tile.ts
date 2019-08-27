@@ -26,7 +26,15 @@ export interface TileGroup extends IObservableObject {
 
 export interface TileScene extends IObservableObject {
   tileSize: number;
-  offset: Vector2;
+  sceneTileSize: Vector2;
+
+  sceneDimension: Vector2;
+
+  viewport: {
+    xy: Vector2;
+    setXY: (xy: Vector2) => void;
+    dimension: Vector2;
+  };
 
   tileGroups: ObservableMap<TileGroup, HTMLElement>;
 }
@@ -52,11 +60,39 @@ export function makeTileGroup(tile: Tile, shape: TileShape, layer: number = 0): 
   );
 }
 
-export function makeTileScene(tileSize: number, offset: Vector2 = [0, 0]): TileScene {
+export function makeTileScene(
+  tileSize: number,
+  sceneTileSize: Vector2,
+  viewportDimension: Vector2
+): TileScene {
+  const sceneDimension: Vector2 = [sceneTileSize[0] * tileSize, sceneTileSize[1] * tileSize];
+  const viewportInitial: Vector2 = [
+    sceneDimension[0] / 2 - viewportDimension[0] / 2,
+    sceneDimension[1] / 2 - viewportDimension[1] / 2
+  ];
+
+  const viewport = observable.object(
+    {
+      xy: viewportInitial,
+      setXY(xy: Vector2) {
+        this.xy = [
+          clamp(xy[0], 0, sceneDimension[0] - viewportDimension[0]),
+          clamp(xy[1], 0, sceneDimension[1] - viewportDimension[1])
+        ];
+      },
+      dimension: viewportDimension
+    },
+    {},
+    { deep: false }
+  );
+
   return observable.object(
     {
       tileSize,
-      offset,
+      sceneTileSize,
+
+      sceneDimension,
+      viewport,
 
       tileGroups: observable.map<TileGroup, HTMLElement>(new Map(), { deep: false })
     },
@@ -65,6 +101,15 @@ export function makeTileScene(tileSize: number, offset: Vector2 = [0, 0]): TileS
       deep: false
     }
   );
+}
+
+export function clampViewportOffset(tileScene: TileScene, offset: Vector2): Vector2 {
+  const { sceneDimension, viewport } = tileScene;
+
+  return [
+    clamp(offset[0], 0, sceneDimension[0] - viewport.dimension[0]),
+    clamp(offset[1], 0, sceneDimension[1] - viewport.dimension[1])
+  ];
 }
 
 export function getShapeRect(shape: TileShape): Vector2 {

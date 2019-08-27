@@ -13,10 +13,13 @@ import Scene from './Scene';
 import Status from './Status';
 
 const TILE_SIZE = 40;
+const SCENE_SIZE: Vector2 = [60, 60];
 
 function Game(): JSX.Element {
   const [store] = React.useState(() => new Store());
-  const [tileScene] = React.useState(() => makeTileScene(TILE_SIZE));
+  const [tileScene] = React.useState(() =>
+    makeTileScene(TILE_SIZE, SCENE_SIZE, [window.innerWidth, window.innerHeight])
+  );
 
   React.useEffect(() => {
     if (process.env.NODE_ENV === 'development') {

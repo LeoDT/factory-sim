@@ -1,6 +1,9 @@
+@import './styles/variables.scss';
+
 .scene {
   position: relative;
   user-select: none;
+  overflow: hidden;
 
   .draw-canvas {
     position: absolute;
@@ -9,5 +12,11 @@
     height: 100%;
     width: 100%;
     pointer-events: none;
+  }
+
+  .grid {
+    background-size: 40px 40px;
+    background-image: linear-gradient(to right, $gray-300 1px, transparent 1px),
+      linear-gradient(to bottom, $gray-300 1px, transparent 1px);
   }
 }
