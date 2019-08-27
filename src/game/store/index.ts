@@ -16,7 +16,6 @@ import {
 } from '~core/board';
 import { tileGroupContainsAnother } from '~core/tile';
 import { Slot } from '~core/slot';
-
 export class Store {
   public ui = new UI();
 
@@ -46,8 +45,8 @@ export class Store {
 
   private boardDisposers = new Map<Board, IReactionDisposer>();
 
-  public addNode(nodeType: NodeType): Node {
-    const node = makeAndStartNode(nodeType);
+  public addNode(nodeType: NodeType, tile: Vector2): Node {
+    const node = makeAndStartNode(nodeType, tile);
 
     this.nodes.push(node);
 
@@ -70,8 +69,8 @@ export class Store {
     return storage;
   }
 
-  public addBoard(boardType: BoardType): Board {
-    const board = makeAndStartBoard(boardType);
+  public addBoard(boardType: BoardType, tile: Vector2): Board {
+    const board = makeAndStartBoard(boardType, tile);
 
     this.boards.push(board);
 
@@ -114,6 +113,27 @@ export class Store {
     });
 
     return things;
+  }
+
+  public addThingOrBoard(o: ThingOnBoard | Board, tile: Vector2): ThingOnBoard | Board | null {
+    let tob: ThingOnBoard | Board | null = null;
+
+    switch (o._type) {
+      case 'Node':
+        tob = this.addNode(o.nodeType, tile);
+        this.checkThingInBoards(tob);
+        break;
+
+      case 'Board':
+        tob = this.addBoard(o.boardType, tile);
+        this.checkBoardWrapThings(tob);
+        break;
+
+      default:
+        break;
+    }
+
+    return tob;
   }
 
   public portUIElements = observable.map<Port, HTMLElement>(new Map<Port, HTMLElement>(), {

@@ -40,7 +40,8 @@
       background-color: $blue-100;
     }
 
-    &.pause {
+    &.pause,
+    &.cancel {
       border-color: $red-500;
       color: $red-500;
 

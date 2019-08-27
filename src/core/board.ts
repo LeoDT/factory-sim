@@ -67,16 +67,20 @@ export function loadBoardTypes(): void {
   console.debug('loaded board types', boardTypes);
 }
 
-export function makeBoard(boardType: BoardType): Board {
+export function makeBoard(
+  boardType: BoardType,
+  tile: Vector2,
+  id: string = generateShortId()
+): Board {
   const board: Board = observable.object(
     {
       _type: 'Board',
       boardType,
-      id: generateShortId(),
+      id,
 
       cycler: makeCycler(2),
 
-      tileGroup: makeTileGroup([0, 0], boardType.shape, LAYERS.board),
+      tileGroup: makeTileGroup(tile, boardType.shape, LAYERS.board),
       usedTiles: observable.array(
         boardType.shape.map<IObservableArray<UsedTile>>(row =>
           observable.array(new Array(row.length).fill(null), { deep: false })
@@ -273,8 +277,8 @@ export function getSlotForResource(
   return slot;
 }
 
-export function makeAndStartBoard(boardType: BoardType): Board {
-  const board = makeBoard(boardType);
+export function makeAndStartBoard(boardType: BoardType, tile: Vector2): Board {
+  const board = makeBoard(boardType, tile);
 
   runClock.subscribe(() => {
     runBoard(board);

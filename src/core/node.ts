@@ -90,7 +90,7 @@ export function getNodeTypeById(nodeTypeId: number): NodeType | undefined {
   return nodeTypes.get(nodeTypeId);
 }
 
-export function makeNode(nodeType: NodeType, id: string = generateShortId()): Node {
+export function makeNode(nodeType: NodeType, tile: Vector2, id: string = generateShortId()): Node {
   const { resourcesForRun } = nodeType;
   const outSlots = nodeType.output.map(r => makeSlot([r.resourceType], undefined, r.amount));
   const storageSlots = resourcesForRun.map(r =>
@@ -110,7 +110,7 @@ export function makeNode(nodeType: NodeType, id: string = generateShortId()): No
       storageSlots,
 
       cycler: makeCycler(nodeType.cycle),
-      tileGroup: makeTileGroup([0, 0], nodeType.shape, LAYERS.node)
+      tileGroup: makeTileGroup(tile, nodeType.shape, LAYERS.node)
     },
     {},
     { deep: false }
@@ -167,8 +167,8 @@ export function runNode(node: Node): void {
   }
 }
 
-export function makeAndStartNode(nodeType: NodeType): Node {
-  const node = makeNode(nodeType);
+export function makeAndStartNode(nodeType: NodeType, tile: Vector2, id?: string): Node {
+  const node = makeNode(nodeType, tile, id);
 
   runClock.subscribe(() => {
     runNode(node);

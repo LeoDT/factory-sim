@@ -2,6 +2,13 @@ import './Scene.scss';
 
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
+import { autorun } from 'mobx';
+import { useGesture } from 'react-use-gesture';
+
+import { subVector2 } from '~utils/vector';
+
+import { transformTranslate } from '~utils/dom';
+import { clampViewportOffset } from '~core/tile';
 
 import { useStore, useTileScene } from './context';
 import Links from './Links';
@@ -9,11 +16,7 @@ import Node from './Node';
 import Storage from './Storage';
 import Board from './Board';
 import Slot from './Slot';
-import { useGesture } from 'react-use-gesture';
-import { subVector2 } from '~utils/vector';
-import { autorun } from 'mobx';
-import { transformTranslate } from '~utils/dom';
-import { clampViewportOffset } from '~core/tile';
+import Holding from './Holding';
 
 export default function Scene(): JSX.Element {
   const tileScene = useTileScene();
@@ -67,34 +70,35 @@ export default function Scene(): JSX.Element {
     <div className="scene" {...bind()}>
       <canvas className="draw-canvas" ref={canvasRef} />
       <Links getCanvas={getCanvas} />
-      <div
-        className="grid"
-        ref={gridRef}
-        style={{
-          width: tileScene.sceneDimension[0] + 1,
-          height: tileScene.sceneDimension[1] + 1,
-          backgroundSize: `${tileScene.tileSize}px ${tileScene.tileGroups}px`
-        }}
-      >
-        <Observer>
-          {() => (
-            <>
-              {store.nodes.map(n => (
-                <Node node={n} key={n.id} />
-              ))}
-              {store.boards.map(b => (
-                <Board board={b} key={b.id} />
-              ))}
-              {store.slots.map(s => (
-                <Slot slot={s} key={s.id} />
-              ))}
-              {store.storages.map(s => (
-                <Storage storage={s} key={s.id} />
-              ))}
-            </>
-          )}
-        </Observer>
-      </div>
+
+      <Observer>
+        {() => (
+          <div
+            className="grid"
+            ref={gridRef}
+            style={{
+              width: tileScene.sceneDimension[0] + 1,
+              height: tileScene.sceneDimension[1] + 1,
+              backgroundSize: `${tileScene.tileSize}px ${tileScene.tileGroups}px`
+            }}
+          >
+            {store.nodes.map(n => (
+              <Node node={n} key={n.id} />
+            ))}
+            {store.boards.map(b => (
+              <Board board={b} key={b.id} />
+            ))}
+            {store.slots.map(s => (
+              <Slot slot={s} key={s.id} />
+            ))}
+            {store.storages.map(s => (
+              <Storage storage={s} key={s.id} />
+            ))}
+
+            <Holding />
+          </div>
+        )}
+      </Observer>
     </div>
   );
 }

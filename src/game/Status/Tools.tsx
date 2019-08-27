@@ -1,9 +1,10 @@
 import * as React from 'react';
 
-import { nodeTypes } from '~core/node';
+import { nodeTypes, makeNode } from '~core/node';
 import { useStore } from '~game/context';
-import { boardTypes } from '~core/board';
+import { boardTypes, makeBoard } from '~core/board';
 import { pauseRunClock, resumeRunClock } from '~core/clocks';
+import { Observer } from 'mobx-react-lite';
 
 export default function Tools(): JSX.Element {
   const store = useStore();
@@ -12,7 +13,14 @@ export default function Tools(): JSX.Element {
 
   nodeTypes.forEach(t => {
     buttons.push(
-      <div className="button" key={`node-${t.id}`} onClick={() => store.addNode(t)}>
+      <div
+        className="button"
+        key={`node-${t.id}`}
+        onClick={e => {
+          store.ui.hold(makeNode(t, [0, 0]));
+          e.stopPropagation();
+        }}
+      >
         {t.name}
       </div>
     );
@@ -20,7 +28,14 @@ export default function Tools(): JSX.Element {
 
   boardTypes.forEach(t => {
     buttons.push(
-      <div className="button" key={`board-${t.id}`} onClick={() => store.addBoard(t)}>
+      <div
+        className="button"
+        key={`board-${t.id}`}
+        onClick={e => {
+          store.ui.hold(makeBoard(t, [0, 0]));
+          e.stopPropagation();
+        }}
+      >
         {t.name}
       </div>
     );
@@ -28,7 +43,26 @@ export default function Tools(): JSX.Element {
 
   return (
     <div className="status-tools">
-      {buttons}
+      <Observer>
+        {() => {
+          if (store.ui.holding.get()) {
+            return (
+              <div
+                className="button cancel"
+                onClick={e => {
+                  store.ui.unhold();
+                  e.stopPropagation();
+                }}
+              >
+                Cancel
+              </div>
+            );
+          }
+
+          return <>{buttons}</>;
+        }}
+      </Observer>
+
       <div style={{ marginLeft: 'auto' }}>
         <div
           className="button pause"

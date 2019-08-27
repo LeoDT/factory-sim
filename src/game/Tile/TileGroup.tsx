@@ -19,6 +19,7 @@ interface Props {
   className?: string;
   tileGroup: TileGroup;
   highlight?: boolean;
+  draggable?: boolean;
 
   onDragStart?: (e?: TransformedEvent) => void;
   onDragSuccess?: () => void;
@@ -29,6 +30,7 @@ export default function TileGroup({
   className,
   tileGroup,
   highlight = false,
+  draggable = true,
   onDragStart,
   onDragSuccess
 }: Props): JSX.Element {
@@ -37,45 +39,47 @@ export default function TileGroup({
   const [dragging, setDragging] = React.useState(false);
 
   const ref = React.useRef<HTMLDivElement | null>(null);
-  const dragBind = useDragInTileScene(ref, tileGroup, {
-    onDragStart: e => {
-      setDragging(true);
+  const dragBind = draggable
+    ? useDragInTileScene(ref, tileGroup, {
+        onDragStart: e => {
+          setDragging(true);
 
-      if (onDragStart) {
-        onDragStart(e);
-      }
-    },
-    onDrag: (c: boolean) => {
-      if (c !== canDrop) {
-        setCanDrop(c);
-      }
-    },
-    onDragEnd: () => {
-      setDragging(false);
-    },
-    onDropSuccess: (tile: Vector2) => {
-      runInAction(() => {
-        const moved = subVector2(tile, tileGroup.tile);
+          if (onDragStart) {
+            onDragStart(e);
+          }
+        },
+        onDrag: (c: boolean) => {
+          if (c !== canDrop) {
+            setCanDrop(c);
+          }
+        },
+        onDragEnd: () => {
+          setDragging(false);
+        },
+        onDropSuccess: (tile: Vector2) => {
+          runInAction(() => {
+            const moved = subVector2(tile, tileGroup.tile);
 
-        tileGroup.tile = tile;
+            tileGroup.tile = tile;
 
-        if (tileGroup.children.length) {
-          tileGroup.children.forEach(cg => {
-            cg.tile = addVector2(cg.tile, moved);
+            if (tileGroup.children.length) {
+              tileGroup.children.forEach(cg => {
+                cg.tile = addVector2(cg.tile, moved);
+              });
+            }
           });
-        }
-      });
 
-      if (onDragSuccess) {
-        onDragSuccess();
-      }
-    },
-    onDropReset: () => {
-      if (!canDrop) {
-        setCanDrop(true);
-      }
-    }
-  });
+          if (onDragSuccess) {
+            onDragSuccess();
+          }
+        },
+        onDropReset: () => {
+          if (!canDrop) {
+            setCanDrop(true);
+          }
+        }
+      })
+    : () => ({});
 
   React.useEffect(() => {
     if (ref.current) {
