@@ -72,6 +72,16 @@
 
 # 未确定概念
 
+## Link & Port(已实现)
+
+`Port` 理解为一个虚拟 `Slot`, 可以关联多个真实 `Slot`. 如果 `Slot` 定义了只接受某种资源, 那么 `Port` 也会表现为只接受已关联的 `Slot` 可以接受的资源
+
+`Link` 可以在 `Port` 之间以一定的效率转移资源. 逻辑大致是:
+
+1. Link 链接了两个 Port, from 和 to.
+1. 寻问 from 有无资源, 如果有那么 hold 住 1 个.
+1. 寻问 to 有无合适的 Slot, 如果有那么把 hold 住的资源放入对应的 Slot 里.
+
 ## Board Node
 
 Board 会自带一个无法移动的 Node, 生产特殊的资源.
