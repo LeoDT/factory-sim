@@ -14,8 +14,9 @@ export default function TileArea({ area, dragBind }: Props): JSX.Element {
   const dimension = React.useMemo(() => {
     const size = getTileAreaSize(tileScene, area);
     const offsetX = area.lt[0] * tileScene.tileSize;
+    const offsetY = area.lt[1] * tileScene.tileSize;
 
-    return { size, offsetX };
+    return { size, offsetX, offsetY };
   }, [tileScene, area]);
 
   return (
@@ -25,7 +26,7 @@ export default function TileArea({ area, dragBind }: Props): JSX.Element {
       style={{
         width: dimension.size[0],
         height: dimension.size[1],
-        transform: `translateX(${dimension.offsetX}px)`
+        transform: `translate3D(${dimension.offsetX}px, ${dimension.offsetY}px, 0)`
       }}
     />
   );
