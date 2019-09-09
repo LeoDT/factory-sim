@@ -19,6 +19,9 @@
 
   .tile-area {
     background-color: $gray-300;
+    position: absolute;
+    left: 0;
+    top: 0;
   }
   .children {
     position: relative;

@@ -1,4 +1,5 @@
 import { IObservableObject, observable, IObservableArray, runInAction, reaction } from 'mobx';
+import SimplexNoise from 'simplex-noise';
 
 import { boardData, BoardTypeJSON } from '~/data/boardType';
 
@@ -65,6 +66,34 @@ export function loadBoardTypes(): void {
   });
 
   console.debug('loaded board types', boardTypes);
+}
+
+export function makeRandomBoardType(): BoardType {
+  const id = Date.now();
+  const simplex = new SimplexNoise(id.toString());
+  const tileSize = [5, 5];
+
+  const shape: TileShape = [];
+
+  for (let y = 0; y < tileSize[1]; y++) {
+    const row: Array<0 | 1> = [];
+
+    for (let x = 0; x < tileSize[0]; x++) {
+      const cell = simplex.noise2D(x, y);
+
+      row.push(cell > -0.3 ? 1 : 0);
+    }
+
+    shape.push(row);
+  }
+
+  return {
+    _type: 'BoardType',
+    id,
+
+    name: `random board ${id}`,
+    shape
+  };
 }
 
 export function makeBoard(

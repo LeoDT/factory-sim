@@ -24,7 +24,7 @@
     "parcel-bundler": "1.12.3",
     "react-hot-loader": "^4.12.10",
     "sass": "^1.22.10",
-    "typescript": "3.5.3"
+    "typescript": "^3.5"
   },
   "dependencies": {
     "classnames": "^2.2.6",
@@ -35,6 +35,7 @@
     "react-dom": "npm:@hot-loader/react-dom",
     "react-use-gesture": "^5.2.4",
     "rxjs": "^6.5.2",
-    "shortid": "^2.2.14"
+    "shortid": "^2.2.14",
+    "simplex-noise": "^2.4.0"
   }
 }
