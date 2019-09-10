@@ -24,6 +24,7 @@ import { makePort, Port } from './port';
 import { Cycler, makeCycler } from './cycler';
 import { TileGroup, makeTileGroup, TileShape } from './tile';
 import { LAYERS } from './layer';
+import { randomBlokusShape, BlokusBlockAmount } from './blokus';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -37,7 +38,7 @@ export interface NodeType {
   resourcesForRun: Resource[];
   output: Resource[];
   cycle: number;
-  shape: TileShape;
+  shape: BlokusBlockAmount | TileShape;
   color: string;
 }
 
@@ -96,6 +97,8 @@ export function makeNode(nodeType: NodeType, tile: Vector2, id: string = generat
   const storageSlots = resourcesForRun.map(r =>
     makeSlot([r.resourceType], undefined, r.amount * NODE_STORAGE_MULTIPLIER)
   );
+  const shape =
+    typeof nodeType.shape === 'number' ? randomBlokusShape(nodeType.shape) : nodeType.shape;
 
   return observable.object(
     {
@@ -110,7 +113,7 @@ export function makeNode(nodeType: NodeType, tile: Vector2, id: string = generat
       storageSlots,
 
       cycler: makeCycler(nodeType.cycle),
-      tileGroup: makeTileGroup(tile, nodeType.shape, LAYERS.node)
+      tileGroup: makeTileGroup(tile, shape, LAYERS.node)
     },
     {},
     { deep: false }

@@ -5,7 +5,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 1, amount: 5 }],
     output: [{ resourceTypeId: 1 }],
     cycle: 2,
-    shape: [[1, 1], [1, 0]],
+    shape: [[1]],
     color: 'red-500'
   },
   {
@@ -14,7 +14,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 1, amount: 10 }],
     output: [{ resourceTypeId: 2 }],
     cycle: 4,
-    shape: [[1, 1], [0, 1], [1, 1]],
+    shape: 3,
     color: 'green-500'
   },
   {
@@ -23,7 +23,7 @@ const data = JSON.stringify([
     resourceRequirements: [{ resourceTypeId: 2, amount: 2 }],
     output: [{ resourceTypeId: 3 }],
     cycle: 7,
-    shape: [[0, 1], [0, 1], [1, 1]],
+    shape: 4,
     color: 'blue-500'
   }
 ]);

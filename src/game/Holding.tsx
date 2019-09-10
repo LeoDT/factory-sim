@@ -24,6 +24,7 @@ export default function Holding(): JSX.Element {
         addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
       );
 
+      ref.current.style.visibility = 'visible';
       transformTranslate(ref.current, offset);
     }
   }, []);
@@ -31,7 +32,7 @@ export default function Holding(): JSX.Element {
   const click = React.useCallback((e: MouseEvent) => {
     const holding = ui.holding.get();
 
-    if (holding) {
+    if (ref.current && holding) {
       const offset = getSnappedPosition(
         tileScene,
         addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
@@ -41,8 +42,10 @@ export default function Holding(): JSX.Element {
       const canDrop = canTileGroupMoveToTile(tileScene, holding.tileGroup, tile);
 
       if (canDrop) {
-        store.addThingOrBoard(holding, tile);
+        store.addThingOrBoard(holding, tile, true);
         ui.unhold();
+
+        ref.current.style.visibility = 'hidden';
       }
     }
   }, []);

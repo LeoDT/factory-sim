@@ -115,12 +115,23 @@ export class Store {
     return things;
   }
 
-  public addThingOrBoard(o: ThingOnBoard | Board, tile: Vector2): ThingOnBoard | Board | null {
+  public addThingOrBoard(
+    o: ThingOnBoard | Board,
+    tile: Vector2,
+    preserveShape: boolean = false
+  ): ThingOnBoard | Board | null {
     let tob: ThingOnBoard | Board | null = null;
 
     switch (o._type) {
       case 'Node':
-        tob = this.addNode(o.nodeType, tile);
+        const nodeType = preserveShape
+          ? {
+              ...o.nodeType,
+              shape: o.tileGroup.shape
+            }
+          : o.nodeType;
+
+        tob = this.addNode(nodeType, tile);
         this.checkThingInBoards(tob);
         break;
 
