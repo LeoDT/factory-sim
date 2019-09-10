@@ -113,7 +113,7 @@ export function makeNode(nodeType: NodeType, tile: Vector2, id: string = generat
       storageSlots,
 
       cycler: makeCycler(nodeType.cycle),
-      tileGroup: makeTileGroup(tile, shape, LAYERS.node)
+      tileGroup: makeTileGroup(tile, shape, true, LAYERS.node)
     },
     {},
     { deep: false }

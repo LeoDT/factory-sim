@@ -1,7 +1,8 @@
-import { observable, IObservableObject, ObservableMap } from 'mobx';
+import { computed, observable, IObservableObject, ObservableMap } from 'mobx';
 import { clamp } from '~utils/numbers';
 import { transformTranslate } from '~utils/dom';
 import { addVector2, subVector2 } from '~utils/vector';
+import { rotateMatrix } from '~utils/array';
 
 export type Tile = Vector2;
 
@@ -18,7 +19,10 @@ export interface TileGroup extends IObservableObject {
   tile: Tile;
   shape: TileShape;
   layer: number; // collision happens to same layer, and bigger layer got bigger z
+  rotate: number;
+  rotatable: boolean;
 
+  transformedShape: TileShape;
   shapeRect: Vector2;
   areas: TileArea[];
   children: TileGroup[];
@@ -43,19 +47,42 @@ export function makeTile(x: number, y: number): Tile {
   return [x, y];
 }
 
-export function makeTileGroup(tile: Tile, shape: TileShape, layer: number = 0): TileGroup {
-  const areas = convertShapeToAreas(shape);
-
+export function makeTileGroup(
+  tile: Tile,
+  shape: TileShape,
+  rotatable: boolean,
+  layer: number = 0
+): TileGroup {
   return observable.object(
     {
       tile,
       shape,
-      shapeRect: getShapeRect(shape),
-      areas,
+      rotate: 0,
+      rotatable,
+      get transformedShape() {
+        let shape = this.shape;
+        const n = Math.floor(this.rotate / 90);
+
+        for (let i = 0; i < n; i++) {
+          shape = rotateMatrix(shape);
+        }
+
+        return shape;
+      },
+      get shapeRect() {
+        return getShapeRect(this.transformedShape);
+      },
+      get areas() {
+        return convertShapeToAreas(this.transformedShape);
+      },
       layer,
       children: []
     },
-    {},
+    {
+      shapeRect: computed,
+      areas: computed,
+      transformedShape: computed
+    },
     { deep: false }
   );
 }
@@ -235,9 +262,9 @@ export function tileGroupContainsAnother(parent: TileGroup, child: TileGroup): b
   const offset = [child.tile[0] - parent.tile[0], child.tile[1] - parent.tile[1]];
 
   // there should be a corresponding cell === 1 in parent when child cell === 1
-  for (let y = 0; y < child.shape.length; y++) {
-    const row = child.shape[y];
-    const pRow = parent.shape[y + offset[1]];
+  for (let y = 0; y < child.transformedShape.length; y++) {
+    const row = child.transformedShape[y];
+    const pRow = parent.transformedShape[y + offset[1]];
 
     if (typeof pRow === 'undefined') return false;
 
@@ -262,7 +289,12 @@ export function canTileGroupMoveToTile(
   tile: Tile,
   excludedTileGroup: TileGroup[] = []
 ): boolean {
-  const newGroup = { ...tileGroup, tile };
+  const newGroup = makeTileGroup(
+    tile,
+    tileGroup.transformedShape,
+    tileGroup.rotatable,
+    tileGroup.layer
+  );
 
   for (const g of tileScene.tileGroups.keys()) {
     if (
@@ -313,5 +345,11 @@ export function dragTileGroupToPosition(
         }
       }
     }
+  }
+}
+
+export function rotateTileGroup(tileGroup: TileGroup): void {
+  if (tileGroup.rotatable) {
+    tileGroup.rotate = (tileGroup.rotate + 90) % 360;
   }
 }

@@ -8,7 +8,12 @@ import { addVector2 } from '~utils/vector';
 
 import { useStore, useTileScene } from './context';
 import TileGroup from './Tile/TileGroup';
-import { getSnappedPosition, getTileForPosition, canTileGroupMoveToTile } from '~core/tile';
+import {
+  getSnappedPosition,
+  getTileForPosition,
+  canTileGroupMoveToTile,
+  rotateTileGroup
+} from '~core/tile';
 import { autorun } from 'mobx';
 import { LAYERS } from '~core/layer';
 
@@ -18,7 +23,9 @@ export default function Holding(): JSX.Element {
   const { ui } = store;
   const ref = React.useRef<HTMLDivElement>(null);
   const move = React.useCallback((e: MouseEvent) => {
-    if (ref.current && ui.holding.get()) {
+    const holding = ui.holding.get();
+
+    if (ref.current && holding) {
       const offset = getSnappedPosition(
         tileScene,
         addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
@@ -50,14 +57,24 @@ export default function Holding(): JSX.Element {
     }
   }, []);
 
+  const rotate = React.useCallback((e: KeyboardEvent) => {
+    const holding = ui.holding.get();
+
+    if (holding && e.key === 'r') {
+      rotateTileGroup(holding.tileGroup);
+    }
+  }, []);
+
   React.useEffect(() => {
     const dispose = autorun(() => {
       if (ui.holding.get()) {
         window.addEventListener('mousemove', move);
         window.addEventListener('click', click);
+        document.addEventListener('keypress', rotate);
       } else {
         window.removeEventListener('mousemove', move);
         window.removeEventListener('click', click);
+        document.removeEventListener('keypress', rotate);
       }
     });
 

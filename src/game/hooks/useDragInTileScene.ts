@@ -8,7 +8,8 @@ import {
   TileGroup,
   canTileGroupMoveToTile,
   getPositionForTile,
-  dragTileGroupToPosition
+  dragTileGroupToPosition,
+  rotateTileGroup
 } from '~core/tile';
 import { useTileScene } from '~game/context';
 import { sameVector2 } from '~utils/vector';
@@ -50,6 +51,17 @@ export function useDragInTileScene(
         if (!memo.inited) {
           const { top, left } = el.getBoundingClientRect();
 
+          if (tileGroup.rotatable) {
+            const rotateEventListner = (e: KeyboardEvent): void => {
+              if (e.key === 'r') {
+                rotateTileGroup(tileGroup);
+              }
+            };
+            document.addEventListener('keypress', rotateEventListner);
+            memo.rotateEventListner = rotateEventListner;
+            memo.originalRotate = tileGroup.rotate;
+          }
+
           memo.toLeft = initial[0] - left;
           memo.toTop = initial[1] - top;
           memo.inited = true;
@@ -83,11 +95,19 @@ export function useDragInTileScene(
             );
 
             if (options.onDropReset) {
+              if (tileGroup.rotatable && tileGroup.rotate !== memo.originalRotate) {
+                tileGroup.rotate = memo.originalRotate;
+              }
+
               options.onDropReset();
             }
           }
 
           if (options.onDragEnd) {
+            if (tileGroup.rotatable) {
+              document.removeEventListener('keypress', memo.rotateEventListner);
+            }
+
             options.onDragEnd();
           }
         } else {

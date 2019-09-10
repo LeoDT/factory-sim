@@ -127,7 +127,7 @@ export class Store {
         const nodeType = preserveShape
           ? {
               ...o.nodeType,
-              shape: o.tileGroup.shape
+              shape: o.tileGroup.transformedShape
             }
           : o.nodeType;
 

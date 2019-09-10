@@ -109,7 +109,7 @@ export function makeBoard(
 
       cycler: makeCycler(2),
 
-      tileGroup: makeTileGroup(tile, boardType.shape, LAYERS.board),
+      tileGroup: makeTileGroup(tile, boardType.shape, false, LAYERS.board),
       usedTiles: observable.array(
         boardType.shape.map<IObservableArray<UsedTile>>(row =>
           observable.array(new Array(row.length).fill(null), { deep: false })

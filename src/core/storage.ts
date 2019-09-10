@@ -64,7 +64,7 @@ export function makeStorage(storageType: StorageType, id: string = generateShort
 
       port: makePort(slots),
       slots,
-      tileGroup: makeTileGroup([0, 0], storageType.shape, 1)
+      tileGroup: makeTileGroup([0, 0], storageType.shape, false, 1)
     },
     {},
     {

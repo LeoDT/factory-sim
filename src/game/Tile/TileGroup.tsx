@@ -11,6 +11,7 @@ import { useDragInTileScene } from '../hooks/useDragInTileScene';
 
 import TileArea from './TileArea';
 import { autorun, runInAction } from 'mobx';
+import { Observer } from 'mobx-react-lite';
 import { addVector2, subVector2 } from '~utils/vector';
 import { LAYERS } from '~core/layer';
 
@@ -105,23 +106,27 @@ export default function TileGroup({
   }, [tileGroup, tileScene]);
 
   return (
-    <div
-      className={classnames('tile-group', className, {
-        'can-not-drop': !canDrop,
-        dragging,
-        highlight
-      })}
-      style={{ zIndex: dragging ? LAYERS.dragging : tileGroup.layer }}
-      ref={ref}
-    >
-      <div className="tile-areas">
-        {tileGroup.areas.map((a, i) => (
-          <TileArea area={a} key={i} dragBind={dragBind} />
-        ))}
-      </div>
-      <div className="children" {...dragBind()}>
-        {children}
-      </div>
-    </div>
+    <Observer>
+      {() => (
+        <div
+          className={classnames('tile-group', className, {
+            'can-not-drop': !canDrop,
+            dragging,
+            highlight
+          })}
+          style={{ zIndex: dragging ? LAYERS.dragging : tileGroup.layer }}
+          ref={ref}
+        >
+          <div className="tile-areas">
+            {tileGroup.areas.map((a, i) => (
+              <TileArea area={a} key={i} dragBind={dragBind} />
+            ))}
+          </div>
+          <div className="children" {...dragBind()}>
+            {children}
+          </div>
+        </div>
+      )}
+    </Observer>
   );
 }
