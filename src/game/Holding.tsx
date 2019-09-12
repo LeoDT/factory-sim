@@ -22,48 +22,55 @@ export default function Holding(): JSX.Element {
   const store = useStore();
   const { ui } = store;
   const ref = React.useRef<HTMLDivElement>(null);
-  const move = React.useCallback((e: MouseEvent) => {
-    const holding = ui.holding.get();
+  const move = React.useCallback(
+    (e: MouseEvent) => {
+      if (ref.current && ui.holding.get()) {
+        const offset = getSnappedPosition(
+          tileScene,
+          addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
+        );
 
-    if (ref.current && holding) {
-      const offset = getSnappedPosition(
-        tileScene,
-        addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
-      );
-
-      ref.current.style.visibility = 'visible';
-      transformTranslate(ref.current, offset);
-    }
-  }, []);
-
-  const click = React.useCallback((e: MouseEvent) => {
-    const holding = ui.holding.get();
-
-    if (ref.current && holding) {
-      const offset = getSnappedPosition(
-        tileScene,
-        addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
-      );
-      const tile = getTileForPosition(tileScene, offset);
-
-      const canDrop = canTileGroupMoveToTile(tileScene, holding.tileGroup, tile);
-
-      if (canDrop) {
-        store.addThingOrBoard(holding, tile, true);
-        ui.unhold();
-
-        ref.current.style.visibility = 'hidden';
+        ref.current.style.visibility = 'visible';
+        transformTranslate(ref.current, offset);
       }
-    }
-  }, []);
+    },
+    [ui]
+  );
 
-  const rotate = React.useCallback((e: KeyboardEvent) => {
-    const holding = ui.holding.get();
+  const click = React.useCallback(
+    (e: MouseEvent) => {
+      const holding = ui.holding.get();
 
-    if (holding && e.key === 'r') {
-      rotateTileGroup(holding.tileGroup);
-    }
-  }, []);
+      if (ref.current && holding) {
+        const offset = getSnappedPosition(
+          tileScene,
+          addVector2([e.clientX, e.clientY], tileScene.viewport.xy)
+        );
+        const tile = getTileForPosition(tileScene, offset);
+
+        const canDrop = canTileGroupMoveToTile(tileScene, holding.tileGroup, tile);
+
+        if (canDrop) {
+          store.addThingOrBoard(holding, tile, true);
+          ui.unhold();
+
+          ref.current.style.visibility = 'hidden';
+        }
+      }
+    },
+    [ui]
+  );
+
+  const rotate = React.useCallback(
+    (e: KeyboardEvent) => {
+      const holding = ui.holding.get();
+
+      if (holding && e.key === 'r') {
+        rotateTileGroup(holding.tileGroup);
+      }
+    },
+    [ui]
+  );
 
   React.useEffect(() => {
     const dispose = autorun(() => {
@@ -81,7 +88,7 @@ export default function Holding(): JSX.Element {
     return () => {
       dispose();
     };
-  }, []);
+  }, [ui]);
 
   return (
     <div
@@ -115,7 +122,7 @@ export default function Holding(): JSX.Element {
               case 'Board':
                 children = (
                   <TileGroup
-                    className="board-tile-group"
+                    className={classnames('board-tile-group', h.boardType.color)}
                     tileGroup={h.tileGroup}
                     draggable={false}
                   />

@@ -28,7 +28,7 @@ export function makeSlot(
       id: generateShortId(),
       resourceTypes,
       capacity,
-      tileGroup: makeTileGroup(tile, [[1]], LAYERS.slot),
+      tileGroup: makeTileGroup(tile, [[1]], false, LAYERS.slot),
       get invisible() {
         return this.tileGroup.tile[0] === -1;
       }

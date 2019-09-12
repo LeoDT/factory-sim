@@ -12,7 +12,8 @@ import {
   addThingToBoard,
   removeThingFromBoard,
   makeAndStartBoard,
-  ThingOnBoard
+  ThingOnBoard,
+  boardAcceptThing
 } from '~core/board';
 import { tileGroupContainsAnother } from '~core/tile';
 import { Slot } from '~core/slot';
@@ -90,7 +91,13 @@ export class Store {
 
   public checkThingInBoards(t: ThingOnBoard): Board | undefined {
     const lastBoard = this.boards.find(b => b.thingsOnBoard.has(t));
-    const board = this.boards.find(b => tileGroupContainsAnother(b.tileGroup, t.tileGroup));
+    const board = this.boards.find(b => {
+      if (boardAcceptThing(b, t)) {
+        return tileGroupContainsAnother(b.tileGroup, t.tileGroup);
+      }
+
+      return false;
+    });
 
     if (lastBoard) {
       removeThingFromBoard(lastBoard, t);

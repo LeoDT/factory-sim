@@ -11,8 +11,8 @@ import { loadBoardTypes } from '~core/board';
 import Game from './game/Game';
 
 loadResourceTypes();
-loadNodeTypes();
 loadBoardTypes();
+loadNodeTypes();
 loadStorageTypes();
 
 function renderGame(): void {

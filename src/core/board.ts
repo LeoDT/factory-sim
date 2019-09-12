@@ -32,6 +32,7 @@ export interface BoardType {
 
   name: string;
   shape: TileShape;
+  color: string;
 }
 
 export interface Board extends IObservableObject {
@@ -92,7 +93,8 @@ export function makeRandomBoardType(): BoardType {
     id,
 
     name: `random board ${id}`,
-    shape
+    shape,
+    color: 'gray'
   };
 }
 
@@ -257,6 +259,16 @@ export function removeThingFromBoard(board: Board, thing: ThingOnBoard): void {
       }
     }
   });
+}
+
+export function boardAcceptThing(board: Board, thing: ThingOnBoard): boolean {
+  switch (thing._type) {
+    case 'Node':
+      return board.boardType === thing.nodeType.workOnBoard;
+
+    default:
+      return true;
+  }
 }
 
 export function getFreeTileForSlot(board: Board): Vector2 | null {

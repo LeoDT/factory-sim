@@ -1,5 +1,6 @@
 import './Board.scss';
 
+import classnames from 'classnames';
 import * as React from 'react';
 import { Observer } from 'mobx-react-lite';
 
@@ -19,17 +20,11 @@ export default function Board({ board }: Props): JSX.Element {
     <Observer>
       {() => (
         <TileGroup
-          className="board-tile-group"
+          className={classnames('board-tile-group', board.boardType.color)}
           tileGroup={board.tileGroup}
-          onDragStart={e => {
-            if (e) {
-              store.ui.select(board, e.currentTarget);
-            }
-          }}
-          onDragSuccess={() => {
-            store.checkBoardWrapThings(board);
-          }}
+          draggable={false}
           highlight={store.ui.selected.get() === board}
+          useTileBlock
         />
       )}
     </Observer>

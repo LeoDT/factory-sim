@@ -14,6 +14,7 @@ import { autorun, runInAction } from 'mobx';
 import { Observer } from 'mobx-react-lite';
 import { addVector2, subVector2 } from '~utils/vector';
 import { LAYERS } from '~core/layer';
+import TileBlock from './TileBlock';
 
 interface Props {
   children?: JSX.Element | null;
@@ -21,6 +22,7 @@ interface Props {
   tileGroup: TileGroup;
   highlight?: boolean;
   draggable?: boolean;
+  useTileBlock?: boolean;
 
   onDragStart?: (e?: TransformedEvent) => void;
   onDragSuccess?: () => void;
@@ -32,6 +34,7 @@ export default function TileGroup({
   tileGroup,
   highlight = false,
   draggable = true,
+  useTileBlock = false,
   onDragStart,
   onDragSuccess
 }: Props): JSX.Element {
@@ -118,9 +121,9 @@ export default function TileGroup({
           ref={ref}
         >
           <div className="tile-areas">
-            {tileGroup.areas.map((a, i) => (
-              <TileArea area={a} key={i} dragBind={dragBind} />
-            ))}
+            {useTileBlock
+              ? tileGroup.blocks.map((t, i) => <TileBlock key={i} tile={t} dragBind={dragBind} />)
+              : tileGroup.areas.map((a, i) => <TileArea area={a} key={i} dragBind={dragBind} />)}
           </div>
           <div className="children" {...dragBind()}>
             {children}

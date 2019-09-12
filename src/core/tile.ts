@@ -18,13 +18,16 @@ export interface TileArea {
 export interface TileGroup extends IObservableObject {
   tile: Tile;
   shape: TileShape;
-  layer: number; // collision happens to same layer, and bigger layer got bigger z
+
   rotate: number;
   rotatable: boolean;
+
+  layer: number; // collision happens to same layer, and bigger layer got bigger z
 
   transformedShape: TileShape;
   shapeRect: Vector2;
   areas: TileArea[];
+  blocks: Tile[];
   children: TileGroup[];
 }
 
@@ -75,6 +78,9 @@ export function makeTileGroup(
       get areas() {
         return convertShapeToAreas(this.transformedShape);
       },
+      get blocks() {
+        return convertShapeToBlocks(this.transformedShape);
+      },
       layer,
       children: []
     },
@@ -93,7 +99,7 @@ export function makeTileScene(
   viewportDimension: Vector2
 ): TileScene {
   const sceneDimension: Vector2 = [sceneTileSize[0] * tileSize, sceneTileSize[1] * tileSize];
-  const viewportInitial: Vector2 = [
+  const viewportInitial: Vector2 = [0, 0] || [
     sceneDimension[0] / 2 - viewportDimension[0] / 2,
     sceneDimension[1] / 2 - viewportDimension[1] / 2
   ];
@@ -182,6 +188,24 @@ export function convertShapeToAreas(shape: TileShape): TileArea[] {
   }
 
   return areas;
+}
+
+export function convertShapeToBlocks(shape: TileShape): Tile[] {
+  const tiles: Tile[] = [];
+
+  for (let j = 0; j < shape.length; j++) {
+    const row = shape[j];
+
+    for (let i = 0; i < row.length; i++) {
+      const cell = row[i];
+
+      if (cell === 1) {
+        tiles.push([i, j]);
+      }
+    }
+  }
+
+  return tiles;
 }
 
 export function getSnappedPosition(tileScene: TileScene, position: Vector2): Vector2 {

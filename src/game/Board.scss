@@ -1,7 +1,24 @@
 @import './styles/variables.scss';
 
 .board-tile-group {
-  .tile-area {
-    background-color: transparentize($green-500, 0.8);
+  &.red-500 {
+    .tile-area {
+      background-color: transparentize($red-500, 0.8);
+    }
+  }
+  &.green-500 {
+    .tile-area {
+      background-color: transparentize($green-500, 0.8);
+    }
+  }
+  &.blue-500 {
+    .tile-area {
+      background-color: transparentize($blue-500, 0.8);
+    }
+  }
+  &.yellow-500 {
+    .tile-area {
+      background-color: transparentize($yellow-500, 0.8);
+    }
   }
 }

@@ -25,6 +25,7 @@ import { Cycler, makeCycler } from './cycler';
 import { TileGroup, makeTileGroup, TileShape } from './tile';
 import { LAYERS } from './layer';
 import { randomBlokusShape, BlokusBlockAmount } from './blokus';
+import { BoardType, boardTypes } from './board';
 
 // node can store resources needed for NODE_STORAGE_MULTIPLIER output
 const NODE_STORAGE_MULTIPLIER = 5;
@@ -40,6 +41,7 @@ export interface NodeType {
   cycle: number;
   shape: BlokusBlockAmount | TileShape;
   color: string;
+  workOnBoard: BoardType;
 }
 
 export interface Node extends IObservableObject {
@@ -70,6 +72,11 @@ export function loadNodeTypes(): void {
     const mappedOutput = (output || []).map(({ resourceTypeId, amount = 1 }) =>
       makeResourceWithTypeId(resourceTypeId, amount)
     );
+    const workOnBoard = boardTypes.get(more.workOnBoardId);
+
+    if (!workOnBoard) {
+      throw new Error(`Unknown board id: ${more.workOnBoardId}`);
+    }
 
     const nodeType: NodeType = {
       ...more,
@@ -78,7 +85,8 @@ export function loadNodeTypes(): void {
         makeResourceWithTypeId(resourceTypeId, amount)
       ),
       output: mappedOutput,
-      resourcesForRun: getRequiredResourcesForResources(mappedOutput)
+      resourcesForRun: getRequiredResourcesForResources(mappedOutput),
+      workOnBoard
     };
 
     nodeTypes.set(nodeType.id, nodeType);
