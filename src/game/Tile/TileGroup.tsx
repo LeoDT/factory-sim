@@ -4,7 +4,7 @@ import classnames from 'classnames';
 import * as React from 'react';
 import { TransformedEvent } from 'react-use-gesture/dist/types';
 
-import { TileGroup, getPositionForTile } from '~core/tile';
+import { TileGroup, getPositionForTile, Tile } from '~core/tile';
 
 import { useTileScene } from '../context';
 import { useDragInTileScene } from '../hooks/useDragInTileScene';
@@ -26,6 +26,8 @@ interface Props {
 
   onDragStart?: (e?: TransformedEvent) => void;
   onDragSuccess?: () => void;
+
+  renderTileBlockChildren?: (t: Tile) => JSX.Element;
 }
 
 export default function TileGroup({
@@ -36,7 +38,9 @@ export default function TileGroup({
   draggable = true,
   useTileBlock = false,
   onDragStart,
-  onDragSuccess
+  onDragSuccess,
+
+  renderTileBlockChildren
 }: Props): JSX.Element {
   const tileScene = useTileScene();
   const [canDrop, setCanDrop] = React.useState(true);
@@ -122,7 +126,14 @@ export default function TileGroup({
         >
           <div className="tile-areas">
             {useTileBlock
-              ? tileGroup.blocks.map((t, i) => <TileBlock key={i} tile={t} dragBind={dragBind} />)
+              ? tileGroup.blocks.map((t, i) => (
+                  <TileBlock
+                    key={i}
+                    tile={t}
+                    dragBind={dragBind}
+                    renderChild={renderTileBlockChildren}
+                  />
+                ))
               : tileGroup.areas.map((a, i) => <TileArea area={a} key={i} dragBind={dragBind} />)}
           </div>
           <div className="children" {...dragBind()}>

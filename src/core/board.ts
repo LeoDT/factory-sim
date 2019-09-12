@@ -1,4 +1,12 @@
-import { IObservableObject, observable, IObservableArray, runInAction, reaction } from 'mobx';
+import {
+  IObservableObject,
+  observable,
+  IObservableArray,
+  runInAction,
+  reaction,
+  IReactionDisposer,
+  toJS
+} from 'mobx';
 import SimplexNoise from 'simplex-noise';
 
 import { boardData, BoardTypeJSON } from '~/data/boardType';
@@ -16,7 +24,7 @@ import {
 import { sendToGlobals } from '~utils/debug';
 import { generateShortId } from '~utils/shortid';
 
-import { TileShape, TileGroup, makeTileGroup, getTileGroupsOffset } from './tile';
+import { TileShape, TileGroup, makeTileGroup, getTileGroupsOffset, Tile } from './tile';
 import { Cycler, makeCycler } from './cycler';
 import { LAYERS } from './layer';
 import { Resource, makeResource } from './resource';
@@ -44,6 +52,7 @@ export interface Board extends IObservableObject {
 
   tileGroup: TileGroup;
   usedTiles: IObservableArray<IObservableArray<UsedTile>>;
+  durability: IObservableArray<IObservableArray<number>>;
 
   thingsOnBoard: Set<ThingOnBoard>;
   nodes: Set<Node>;
@@ -113,10 +122,13 @@ export function makeBoard(
 
       tileGroup: makeTileGroup(tile, boardType.shape, false, LAYERS.board),
       usedTiles: observable.array(
-        boardType.shape.map<IObservableArray<UsedTile>>(row =>
+        boardType.shape.map(row =>
           observable.array(new Array(row.length).fill(null), { deep: false })
         ),
         { deep: false }
+      ),
+      durability: observable.array(
+        boardType.shape.map(row => observable.array(row.map(i => (i === 1 ? 100 : 0))))
       ),
       get thingsOnBoard(): Set<ThingOnBoard> {
         const set = new Set<ThingOnBoard>();
@@ -154,21 +166,46 @@ export function makeBoard(
     { deep: false }
   );
 
-  reaction(
-    () => {
-      const groups = [];
-      for (const t of board.thingsOnBoard) {
-        groups.push(t.tileGroup);
-      }
+  return board;
+}
 
-      return groups;
-    },
-    groups => {
-      board.tileGroup.children = groups;
+export function boardReactions(board: Board): IReactionDisposer[] {
+  const disposers = [];
+
+  disposers.push(
+    reaction(
+      () => {
+        const groups = [];
+        for (const t of board.thingsOnBoard) {
+          groups.push(t.tileGroup);
+        }
+
+        return groups;
+      },
+      groups => {
+        board.tileGroup.children = groups;
+      }
+    )
+  );
+
+  reaction(
+    () => toJS(board.durability),
+    () => {
+      runInAction(() => {
+        for (let j = 0; j < board.durability.length; j++) {
+          const row = board.durability[j];
+
+          for (let i = 0; i < row.length; i++) {
+            if (row[i] <= 0 && board.tileGroup.shape[j][i] === 1) {
+              board.tileGroup.shapeMask[j][i] = 0;
+            }
+          }
+        }
+      });
     }
   );
 
-  return board;
+  return disposers;
 }
 
 export function runBoard(board: Board): void {
@@ -198,7 +235,7 @@ export function runBoard(board: Board): void {
 
     case 'FINISH':
       for (const node of board.nodes) {
-        if (node.inPort) {
+        if (node.inPort && node.cycler.state !== 'BUSY') {
           for (const toSlot of node.inPort.slots) {
             for (const resourceType of toSlot.resourceTypes) {
               const resourceNeeded = makeResource(resourceType, 1);
@@ -316,6 +353,14 @@ export function getSlotForResource(
   }
 
   return slot;
+}
+
+export function getBoardTileDurability(board: Board, tile: Tile): number | undefined {
+  const row = board.durability[tile[1]];
+
+  if (row) {
+    return row[tile[0]];
+  }
 }
 
 export function makeAndStartBoard(boardType: BoardType, tile: Vector2): Board {

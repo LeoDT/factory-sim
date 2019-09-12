@@ -7,9 +7,10 @@ import { ReactEventHandlers } from 'react-use-gesture/dist/types';
 interface Props {
   tile: Tile;
   dragBind: () => ReactEventHandlers;
+  renderChild?: (t: Tile) => JSX.Element;
 }
 
-export default function TileBlock({ tile, dragBind }: Props): JSX.Element {
+export default function TileBlock({ tile, dragBind, renderChild }: Props): JSX.Element {
   const tileScene = useTileScene();
   const dimension = React.useMemo(() => {
     const offsetX = tile[0] * tileScene.tileSize;
@@ -27,6 +28,8 @@ export default function TileBlock({ tile, dragBind }: Props): JSX.Element {
         height: tileScene.tileSize,
         transform: `translate3D(${dimension.offsetX}px, ${dimension.offsetY}px, 0)`
       }}
-    />
+    >
+      {renderChild ? renderChild(tile) : null}
+    </div>
   );
 }

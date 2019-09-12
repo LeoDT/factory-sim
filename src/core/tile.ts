@@ -22,8 +22,11 @@ export interface TileGroup extends IObservableObject {
   rotate: number;
   rotatable: boolean;
 
+  shapeMask: TileShape;
+
   layer: number; // collision happens to same layer, and bigger layer got bigger z
 
+  maskedShape: TileShape;
   transformedShape: TileShape;
   shapeRect: Vector2;
   areas: TileArea[];
@@ -60,10 +63,22 @@ export function makeTileGroup(
     {
       tile,
       shape,
+      shapeMask: observable.array(shape.map(r => r.map(() => 1))),
       rotate: 0,
       rotatable,
+      get maskedShape() {
+        return this.shape.map((row, j) =>
+          row.map((c, i) => {
+            if (this.shapeMask[j][i] === 1) {
+              return c;
+            }
+
+            return 0;
+          })
+        );
+      },
       get transformedShape() {
-        let shape = this.shape;
+        let shape = this.maskedShape;
         const n = Math.floor(this.rotate / 90);
 
         for (let i = 0; i < n; i++) {
@@ -87,7 +102,8 @@ export function makeTileGroup(
     {
       shapeRect: computed,
       areas: computed,
-      transformedShape: computed
+      transformedShape: computed,
+      maskedShape: computed
     },
     { deep: false }
   );

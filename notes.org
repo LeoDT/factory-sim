@@ -20,3 +20,5 @@
 ** DONE area to matrix
    - State "DONE"       from "TODO"       [2019-08-26 Mon 08:57]
 ** TODO toml?
+** TODO hero to cast skills
+** TODO ui to select skill target

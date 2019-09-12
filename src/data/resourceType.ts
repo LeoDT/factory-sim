@@ -1,20 +1,20 @@
 const data = JSON.stringify([
   {
     id: 1,
-    name: 'basic',
-    icon: '📕'
+    name: 'Power',
+    icon: '💪'
   },
   {
     id: 2,
-    name: 'advanced A',
+    name: 'Slash',
     requirements: [{ resourceTypeId: 1, amount: 2 }],
-    icon: '📗'
+    icon: '🗡'
   },
   {
     id: 3,
-    name: 'advanced B',
-    requirements: [{ resourceTypeId: 1, amount: 1 }, { resourceTypeId: 2, amount: 1 }],
-    icon: '📘'
+    name: 'Block',
+    requirements: [{ resourceTypeId: 1, amount: 1 }],
+    icon: '🛡'
   }
 ]);
 

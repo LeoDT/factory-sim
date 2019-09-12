@@ -1,31 +1,28 @@
 const data = JSON.stringify([
   {
     id: 1,
-    name: 'basic resource generator',
-    resourceRequirements: [{ resourceTypeId: 1, amount: 5 }],
+    name: '蓄力',
     output: [{ resourceTypeId: 1 }],
-    cycle: 2,
-    shape: [[1]],
+    cycle: 10,
+    shape: 2,
     color: 'red-500',
     workOnBoardId: 1
   },
   {
     id: 2,
-    name: 'advanced A producer',
-    resourceRequirements: [{ resourceTypeId: 1, amount: 10 }],
+    name: '攻击',
     output: [{ resourceTypeId: 2 }],
-    cycle: 4,
+    cycle: 15,
     shape: 3,
     color: 'green-500',
     workOnBoardId: 1
   },
   {
     id: 3,
-    name: 'advanced B producer',
-    resourceRequirements: [{ resourceTypeId: 2, amount: 2 }],
+    name: '格挡',
     output: [{ resourceTypeId: 3 }],
-    cycle: 7,
-    shape: 4,
+    cycle: 15,
+    shape: 3,
     color: 'blue-500',
     workOnBoardId: 1
   }

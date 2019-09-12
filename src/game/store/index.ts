@@ -1,4 +1,4 @@
-import { observable, autorun, IReactionDisposer, decorate, computed } from 'mobx';
+import { observable, toJS, decorate, computed, reaction } from 'mobx';
 
 import { NodeType, Node, makeAndStartNode } from '~core/node';
 import { Link, makeAndStartLink } from '~core/link';
@@ -13,10 +13,12 @@ import {
   removeThingFromBoard,
   makeAndStartBoard,
   ThingOnBoard,
-  boardAcceptThing
+  boardAcceptThing,
+  boardReactions
 } from '~core/board';
 import { tileGroupContainsAnother } from '~core/tile';
 import { Slot } from '~core/slot';
+
 export class Store {
   public ui = new UI();
 
@@ -44,7 +46,7 @@ export class Store {
     return things;
   }
 
-  private boardDisposers = new Map<Board, IReactionDisposer>();
+  private boardDisposers = new Map<Board, Array<() => void>>();
 
   public addNode(nodeType: NodeType, tile: Vector2): Node {
     const node = makeAndStartNode(nodeType, tile);
@@ -75,16 +77,25 @@ export class Store {
 
     this.boards.push(board);
 
-    this.boardDisposers.set(
-      board,
-      autorun(() => {
-        for (const slot of board.slots) {
-          if (this.slots.indexOf(slot) === -1) {
-            this.slots.push(slot);
+    this.boardDisposers.set(board, [
+      ...boardReactions(board),
+      reaction(
+        () => toJS(board.tileGroup.shapeMask),
+        () => {
+          this.checkBoardWrapThings(board);
+        }
+      ),
+      reaction(
+        () => board.slots,
+        () => {
+          for (const slot of board.slots) {
+            if (this.slots.indexOf(slot) === -1) {
+              this.slots.push(slot);
+            }
           }
         }
-      })
-    );
+      )
+    ]);
 
     return board;
   }
@@ -111,6 +122,12 @@ export class Store {
   }
 
   public checkBoardWrapThings(b: Board): ThingOnBoard[] {
+    for (const t of b.thingsOnBoard) {
+      if (!tileGroupContainsAnother(b.tileGroup, t.tileGroup)) {
+        removeThingFromBoard(b, t);
+      }
+    }
+
     const things = this.thingsNotOnBoard.filter(t =>
       tileGroupContainsAnother(b.tileGroup, t.tileGroup)
     );
